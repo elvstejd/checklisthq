@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Button from "../components/Button";
+import Link from "next/link";
 
 const Home: NextPage = () => {
   return (
@@ -21,7 +22,9 @@ const Home: NextPage = () => {
             </p>
           </div>
           <div className="mt-8 flex flex-col items-center justify-center">
-            <Button>Create my checklist now</Button>
+            <Link href="/new">
+              <Button>Create my checklist now</Button>
+            </Link>
             <p className="text-sm text-gray-500">10 free checklists per user</p>
           </div>
         </div>
