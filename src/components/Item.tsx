@@ -21,7 +21,7 @@ export default function Item({ title, done, isFirst, description }: ItemProps) {
     >
       <div
         className={clsx(
-          "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors group-hover:border-blue-600",
+          "flex aspect-square h-10 items-center justify-center rounded-full border-2 transition-colors group-hover:border-blue-600",
           crossed ? "border-blue-600 bg-blue-600" : "bg-gray-100"
         )}
       >
