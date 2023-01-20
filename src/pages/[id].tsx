@@ -4,31 +4,8 @@ import Item from "../components/Item";
 
 import { api } from "../utils/api";
 
-const tasks = [
-  {
-    title: "Step 1 is to do this",
-    done: true,
-  },
-  {
-    title: "Step is then this",
-    done: false,
-  },
-  {
-    title: "Step is then this",
-    done: false,
-  },
-  {
-    title: "Step is then this",
-    done: false,
-  },
-  {
-    title: "Step is then this",
-    done: false,
-  },
-];
-
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const sections = api.checklist.getSections.useQuery({ id: "HELOO" });
 
   return (
     <>
@@ -39,18 +16,33 @@ const Home: NextPage = () => {
       </Head>
       <main>
         <div className="mx-auto max-w-2xl">
-          <p className="my-10 text-center">repeat.so</p>
-          <h1 className="bold mb-4 text-xl font-bold">How to do a task</h1>
-          <div className="rounded-md border border-solid border-gray-200 px-4">
-            {tasks.map((task, idx) => (
-              <Item
-                key={idx}
-                title={task.title}
-                done={task.done}
-                isFirst={idx !== 0}
-              />
-            ))}
-          </div>
+          <p className="my-10 text-center">repeatlist</p>
+          <h1 className="bold mb-4 text-center text-2xl font-bold">
+            How to Reach Flow Easily
+          </h1>
+          {sections.data?.map((section, idx) => (
+            <div
+              key={idx}
+              className="mb-6 rounded-md border border-solid border-gray-200"
+            >
+              <div className="border-b py-3 px-4">
+                <h2 className="text-lg font-semibold text-gray-800">
+                  {section.title}
+                </h2>
+              </div>
+              <div className="px-4">
+                {section.tasks.map((task, idx) => (
+                  <Item
+                    key={idx}
+                    title={task.title}
+                    done={false}
+                    description={task.description}
+                    isFirst={idx !== 0}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </main>
     </>
