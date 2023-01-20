@@ -1,35 +1,47 @@
 import { useState } from "react";
+import clsx from "clsx";
 
 interface ItemProps {
   title: string;
   done: boolean;
   isFirst: boolean;
+  description?: string;
 }
 
-export default function Item({ title, done, isFirst }: ItemProps) {
+export default function Item({ title, done, isFirst, description }: ItemProps) {
   const [crossed, setCrossed] = useState(done);
 
   return (
     <div
-      className={`group flex cursor-pointer items-center gap-4 border-t-gray-200 py-3 ${
+      className={clsx(
+        "group flex cursor-pointer items-center gap-4 border-t-gray-200 py-3",
         isFirst ? "border-t" : "border-t-0"
-      }`}
+      )}
       onClick={() => setCrossed((v) => !v)}
     >
       <div
-        className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors group-hover:border-blue-600 ${
+        className={clsx(
+          "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors group-hover:border-blue-600",
           crossed ? "border-blue-600 bg-blue-600" : "bg-gray-100"
-        }`}
+        )}
       >
         {crossed && checkIcon}
       </div>
-      <p
-        className={`font-medium ${
-          crossed ? "text-gray-400 line-through" : "text-slate-900"
-        }`}
-      >
-        {title}
-      </p>
+      <div>
+        <p
+          className={clsx(
+            "font-medium",
+            crossed ? "text-gray-400 line-through" : "text-slate-900"
+          )}
+        >
+          {title}
+        </p>
+        <p
+          className={clsx("text-sm text-gray-500 ", crossed && "text-gray-300")}
+        >
+          {description}
+        </p>
+      </div>
     </div>
   );
 }
