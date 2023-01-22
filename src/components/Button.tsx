@@ -1,10 +1,13 @@
 import clsx from "clsx";
+import React from "react";
 
 interface ButtonProps {
   children: string | JSX.Element;
   variant?: "default" | "outline";
   square?: boolean;
   size?: "md" | "sm";
+  noBorder?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
 export default function Button({
@@ -12,9 +15,12 @@ export default function Button({
   variant,
   square,
   size,
+  noBorder,
+  onClick,
 }: ButtonProps) {
   return (
     <button
+      {...{ onClick }}
       className={clsx(
         "rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 active:bg-blue-800",
         {
@@ -26,6 +32,9 @@ export default function Button({
         },
         {
           "text-sm": size === "sm",
+        },
+        {
+          "border-none": noBorder === true,
         }
       )}
     >
