@@ -25,11 +25,8 @@ export function SpanInput({
         ref={inputRef}
         className={clsx(
           className,
-          "w-fit cursor-text rounded-md bg-gray-100 px-2 py-1 empty:before:text-gray-400 focus-visible:bg-white",
-          uniqueClass,
-          {
-            "bg-white hover:bg-gray-100": value,
-          }
+          "w-fit cursor-text rounded-md border border-transparent px-2 py-1 empty:before:text-gray-400 hover:border-gray-400 focus-visible:bg-white",
+          uniqueClass
         )}
         role="textbox"
         onClick={() => {
