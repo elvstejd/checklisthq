@@ -1,8 +1,11 @@
 import clsx from "clsx";
 import Head from "next/head";
+import { useState } from "react";
 import type { Control, UseFormRegister } from "react-hook-form";
 import { useForm, useFieldArray } from "react-hook-form";
 import { SpanInput } from "../components/SpanInput";
+import { Article, X } from "phosphor-react";
+import Button from "../components/Button";
 
 const defaultValues = {
   title: "",
@@ -45,9 +48,9 @@ export default function New() {
               uniqueClass="checklist-title"
             />
           </div>
-          {sections.map((_, index) => (
+          {sections.map((_, sectionIndex) => (
             <div
-              key={index}
+              key={sectionIndex}
               className="mb-6 rounded-md border border-solid border-gray-200"
             >
               <div className="border-b py-3 px-4">
@@ -60,7 +63,7 @@ export default function New() {
               <div className="px-4">
                 <TasksInputArray
                   {...{ control, register }}
-                  nestedIndex={index}
+                  sectionIndex={sectionIndex}
                 />
               </div>
             </div>
@@ -70,7 +73,7 @@ export default function New() {
               append({ tasks: [{ description: "", title: "" }], title: "" })
             }
           >
-            Add section
+            Add another section...
           </button>
         </div>
       </main>
@@ -79,53 +82,84 @@ export default function New() {
 }
 
 function TasksInputArray({
-  nestedIndex,
+  sectionIndex,
   control,
   register,
 }: {
-  nestedIndex: number;
+  sectionIndex: number;
   control: Control<typeof defaultValues>;
   register: UseFormRegister<typeof defaultValues>;
 }) {
   const { fields: tasks, append } = useFieldArray({
     control,
-    name: `sections.${nestedIndex}.tasks`,
+    name: `sections.${sectionIndex}.tasks`,
   });
 
   return (
     <>
-      {tasks.map((task, index) => (
-        <div
-          key={index}
-          className={clsx(
-            "group flex items-center gap-4 border-t-gray-200 py-3",
-            index !== 0 ? "border-t" : "border-t-0"
-          )}
-        >
-          <div
-            className={
-              "flex aspect-square h-10 items-center justify-center rounded-full border-2 bg-gray-100 transition-colors"
-            }
-          />
-          <div className="w-full">
-            <SpanInput
-              placeholder="Step title"
-              className="block font-medium text-slate-900"
-              uniqueClass="step-title"
-            />
-            <textarea
-              placeholder="Step description"
-              {...register(
-                `sections.${nestedIndex}.tasks.${index}.description`
-              )}
-              className="mt-2 block w-full rounded-md bg-white px-2 py-1 text-sm text-gray-500 transition-colors placeholder-shown:bg-gray-100 hover:bg-gray-100 focus-visible:bg-white"
-            />
-          </div>
-        </div>
+      {tasks.map((_, taskIndex) => (
+        <TaskInput
+          key={taskIndex}
+          sectionIndex={sectionIndex}
+          taskIndex={taskIndex}
+          register={register}
+        />
       ))}
       <button onClick={() => append({ description: "", title: "" })}>
         Add step
       </button>
     </>
+  );
+}
+
+function TaskInput({
+  sectionIndex,
+  taskIndex,
+  register,
+}: {
+  sectionIndex: number;
+  taskIndex: number;
+  register: UseFormRegister<typeof defaultValues>;
+}) {
+  const [showDesc, setShowDesc] = useState(false);
+
+  return (
+    <div
+      key={taskIndex}
+      className={clsx(
+        "group flex items-baseline gap-4 border-t-gray-200 py-3",
+        taskIndex !== 0 ? "border-t" : "border-t-0"
+      )}
+    >
+      <div className="w-full">
+        <SpanInput
+          placeholder="Describe the step"
+          className="block font-medium text-slate-900"
+          uniqueClass="step-title"
+        />
+        {showDesc && (
+          <textarea
+            placeholder="Add more information..."
+            {...register(
+              `sections.${sectionIndex}.tasks.${taskIndex}.description`
+            )}
+            className="transition-color block w-full rounded-md border border-transparent bg-white px-2 py-1 text-sm text-gray-500 hover:border-gray-400"
+          />
+        )}
+      </div>
+      <div className="flex opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+        <Button
+          square
+          noBorder
+          variant="outline"
+          onClick={() => setShowDesc((v) => !v)}
+        >
+          <Article />
+        </Button>
+        <Button square variant="outline" noBorder>
+          <X />
+        </Button>
+      </div>
+    </div>
   );
 }
