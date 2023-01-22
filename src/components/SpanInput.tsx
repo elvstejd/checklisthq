@@ -4,9 +4,14 @@ import { useEffect, useRef, useState } from "react";
 interface SpanInputProps {
   placeholder: string;
   className: string;
+  uniqueClass: string;
 }
 
-export function SpanInput({ placeholder, className }: SpanInputProps) {
+export function SpanInput({
+  placeholder,
+  className,
+  uniqueClass,
+}: SpanInputProps) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLSpanElement>(null);
 
@@ -20,8 +25,11 @@ export function SpanInput({ placeholder, className }: SpanInputProps) {
         ref={inputRef}
         className={clsx(
           className,
-          "w-fit rounded-md px-2 py-1 empty:before:text-gray-400 hover:bg-gray-100",
-          "span-input"
+          "w-fit cursor-text rounded-md bg-gray-100 px-2 py-1 empty:before:text-gray-400 focus-visible:bg-white",
+          uniqueClass,
+          {
+            "bg-white hover:bg-gray-100": value,
+          }
         )}
         role="textbox"
         onClick={() => {
@@ -39,7 +47,7 @@ export function SpanInput({ placeholder, className }: SpanInputProps) {
       ></span>
       <style
         dangerouslySetInnerHTML={{
-          __html: `.span-input:empty::before { content: "${placeholder}"}`,
+          __html: `.${uniqueClass}:empty::before { content: "${placeholder}"}`,
         }}
       ></style>
     </>
