@@ -1,26 +1,35 @@
+import clsx from "clsx";
 import Head from "next/head";
-import Item from "../components/Item";
+import type { Control, UseFormRegister } from "react-hook-form";
 import { useForm, useFieldArray } from "react-hook-form";
+import Button from "../components/Button";
+import { Popover } from "../components/Popover";
 
-const tasks = [
-  {
-    title: "Add new step here...",
-    done: true,
-  },
-];
+const defaultValues = {
+  title: "",
+  sections: [
+    {
+      title: "",
+      tasks: [
+        {
+          title: "",
+          description: "",
+        },
+      ],
+    },
+  ],
+};
 
 export default function New() {
   const { register, control, handleSubmit, reset, trigger, setError } = useForm(
     {
-      // defaultValues: {}; you can populate the fields by this attribute
+      defaultValues,
     }
   );
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control,
-      name: "task", // unique name for your Field Array
-    }
-  );
+  const { fields: sections, append } = useFieldArray({
+    control,
+    name: "sections", // unique name for your Field Array
+  });
 
   return (
     <>
@@ -31,20 +40,127 @@ export default function New() {
       </Head>
       <main>
         <div className="mx-auto max-w-2xl">
-          <p className="my-10 text-center">repeat.so</p>
-          <h1 className="bold mb-4 text-xl font-bold">How to do a task</h1>
-          <div className="rounded-md border border-solid border-gray-200 px-4">
-            {tasks.map((task, idx) => (
-              <Item
-                key={idx}
-                title={task.title}
-                done={task.done}
-                isFirst={idx !== 0}
-              />
-            ))}
+          <p className="my-10 text-center">repeatlist</p>
+          <div className="relative mb-4 flex justify-center">
+            <input
+              className="bold text-center text-2xl font-bold"
+              placeholder="How to do a task"
+            />
+            <Popover
+              target={
+                <div className="absolute top-1/2 right-0 -translate-y-1/2">
+                  <Button square variant="outline">
+                    {gearIcon}
+                  </Button>
+                </div>
+              }
+            >
+              <Button>Toggle</Button>
+            </Popover>
           </div>
+          {sections.map((section, index) => (
+            <div
+              key={index}
+              className="mb-6 rounded-md border border-solid border-gray-200"
+            >
+              <div className="border-b py-3 px-4">
+                <input
+                  placeholder="Section title"
+                  defaultValue={section.title}
+                  className="text-lg font-semibold text-gray-800"
+                />
+              </div>
+              <div className="px-4">
+                <TasksInputArray
+                  {...{ control, register }}
+                  nestedIndex={index}
+                />
+              </div>
+            </div>
+          ))}
+          <button
+            onClick={() =>
+              append({ tasks: [{ description: "", title: "" }], title: "" })
+            }
+          >
+            Add section
+          </button>
         </div>
       </main>
     </>
   );
 }
+
+function TasksInputArray({
+  nestedIndex,
+  control,
+  register,
+}: {
+  nestedIndex: number;
+  control: Control<typeof defaultValues>;
+  register: UseFormRegister<typeof defaultValues>;
+}) {
+  const { fields: tasks, append } = useFieldArray({
+    control,
+    name: `sections.${nestedIndex}.tasks`,
+  });
+
+  return (
+    <>
+      {tasks.map((task, index) => (
+        <div
+          key={index}
+          className={clsx(
+            "group flex items-center gap-4 border-t-gray-200 py-3",
+            index !== 0 ? "border-t" : "border-t-0"
+          )}
+        >
+          <div
+            className={
+              "flex aspect-square h-10 items-center justify-center rounded-full border-2 bg-gray-100 transition-colors"
+            }
+          />
+          <div>
+            <input
+              placeholder="Step title"
+              {...register(`sections.${nestedIndex}.tasks.${index}.title`)}
+              className="block font-medium text-slate-900"
+            />
+            <input
+              placeholder="Step description"
+              {...register(
+                `sections.${nestedIndex}.tasks.${index}.description`
+              )}
+              className="block text-sm text-gray-500"
+            />
+          </div>
+        </div>
+      ))}
+      <button onClick={() => append({ description: "", title: "" })}>
+        Add step
+      </button>
+    </>
+  );
+}
+
+const gearIcon = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="aspect-square h-5"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"
+    />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+    />
+  </svg>
+);
