@@ -4,8 +4,9 @@ import { useState } from "react";
 import type { Control, UseFormRegister } from "react-hook-form";
 import { useForm, useFieldArray } from "react-hook-form";
 import { SpanInput } from "../components/SpanInput";
-import { Article, X } from "phosphor-react";
+import { Article, GearSix, X } from "phosphor-react";
 import Button from "../components/Button";
+import { Popover, Switch } from "@headlessui/react";
 
 const defaultValues = {
   title: "",
@@ -40,11 +41,14 @@ export default function New() {
       </Head>
       <main>
         <div className="mx-auto max-w-2xl">
-          <p className="my-10 text-center">repeatlist</p>
+          <div className="flex items-center justify-between">
+            <p className="my-10 text-center">repeatlist</p>
+            <SettingsMenu />
+          </div>
           <div className="relative mb-4 flex justify-center">
             <SpanInput
               className="bold text-center text-2xl font-bold"
-              placeholder="How to do a task"
+              placeholder="Your Awesome Title Here"
               uniqueClass="checklist-title"
             />
           </div>
@@ -160,6 +164,46 @@ function TaskInput({
           <X />
         </Button>
       </div>
+    </div>
+  );
+}
+
+function SettingsMenu() {
+  return (
+    <Popover className="relative">
+      <Popover.Button className="rounded-lg  border bg-transparent p-2.5 text-sm font-semibold text-gray-500 transition-colors hover:bg-gray-100  active:bg-gray-200">
+        <GearSix size={20} />
+      </Popover.Button>
+      <Popover.Panel className="absolute right-0 z-10 w-40 rounded-md bg-white p-4 shadow-md">
+        <div className="flex flex-col gap-2">
+          <MyToggle label="Section titles" />
+          <MyToggle label="Multiple sections" />
+        </div>
+      </Popover.Panel>
+    </Popover>
+  );
+}
+
+function MyToggle({ label }: { label: string }) {
+  const [enabled, setEnabled] = useState(false);
+
+  return (
+    <div className="flex gap-4">
+      <Switch
+        checked={enabled}
+        onChange={setEnabled}
+        className={`${
+          enabled ? "bg-blue-600" : "bg-gray-200"
+        } relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full`}
+      >
+        <span className="sr-only">Enable notifications</span>
+        <span
+          className={`${
+            enabled ? "translate-x-6" : "translate-x-1"
+          } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+        />
+      </Switch>
+      <span className="text-base">{label}</span>
     </div>
   );
 }
