@@ -1,12 +1,18 @@
 import clsx from "clsx";
 import Head from "next/head";
 import { useState } from "react";
-import type { Control, UseFormRegister } from "react-hook-form";
+import type {
+  Control,
+  UseFieldArrayRemove,
+  UseFormRegister,
+  UseFormWatch,
+} from "react-hook-form";
 import { useForm, useFieldArray } from "react-hook-form";
 import { SpanInput } from "../components/SpanInput";
-import { Article, GearSix, X } from "phosphor-react";
+import { Article, X } from "phosphor-react";
 import Button from "../components/Button";
-import { Popover, Switch } from "@headlessui/react";
+import { useSettingsStore } from "../stores";
+import { SettingsMenu } from "../components/SettingsMenu";
 
 const defaultValues = {
   title: "",
@@ -24,13 +30,19 @@ const defaultValues = {
 };
 
 export default function New() {
-  const { register, control } = useForm({
+  const { register, control, watch } = useForm({
     defaultValues,
   });
-  const { fields: sections, append } = useFieldArray({
+  const {
+    fields: sections,
+    append,
+    remove,
+  } = useFieldArray({
     control,
     name: "sections",
   });
+
+  const { showSectionTitles, showMultipleSections } = useSettingsStore();
 
   return (
     <>
@@ -52,33 +64,39 @@ export default function New() {
               uniqueClass="checklist-title"
             />
           </div>
-          {sections.map((_, sectionIndex) => (
+          {sections.map((section, sectionIndex) => (
             <div
-              key={sectionIndex}
+              key={section.id}
               className="mb-6 rounded-md border border-solid border-gray-200"
             >
-              <div className="border-b py-3 px-4">
-                <SpanInput
-                  placeholder="Section title"
-                  className="text-lg font-semibold text-gray-800"
-                  uniqueClass="section-title"
-                />
-              </div>
+              {showSectionTitles && (
+                <div className="border-b py-3 px-4">
+                  <SpanInput
+                    placeholder="Section title"
+                    className="text-lg font-semibold text-gray-800"
+                    uniqueClass="section-title"
+                  />
+                </div>
+              )}
               <div className="px-4">
                 <TasksInputArray
                   {...{ control, register }}
                   sectionIndex={sectionIndex}
+                  sectionRemove={remove}
+                  watch={watch}
                 />
               </div>
             </div>
           ))}
-          <button
-            onClick={() =>
-              append({ tasks: [{ description: "", title: "" }], title: "" })
-            }
-          >
-            Add another section...
-          </button>
+          {showMultipleSections && (
+            <button
+              onClick={() =>
+                append({ tasks: [{ description: "", title: "" }], title: "" })
+              }
+            >
+              Add another section...
+            </button>
+          )}
         </div>
       </main>
     </>
@@ -89,29 +107,45 @@ function TasksInputArray({
   sectionIndex,
   control,
   register,
+  sectionRemove,
+  watch,
 }: {
   sectionIndex: number;
   control: Control<typeof defaultValues>;
   register: UseFormRegister<typeof defaultValues>;
+  sectionRemove: UseFieldArrayRemove;
+  watch: UseFormWatch<typeof defaultValues>;
 }) {
-  const { fields: tasks, append } = useFieldArray({
+  const {
+    fields: tasks,
+    append,
+    remove,
+  } = useFieldArray({
     control,
     name: `sections.${sectionIndex}.tasks`,
   });
 
   return (
     <>
-      {tasks.map((_, taskIndex) => (
+      {tasks.map((task, taskIndex) => (
         <TaskInput
-          key={taskIndex}
+          key={task.id}
           sectionIndex={sectionIndex}
           taskIndex={taskIndex}
           register={register}
+          remove={remove}
+          sectionRemove={sectionRemove}
+          watch={watch}
         />
       ))}
-      <button onClick={() => append({ description: "", title: "" })}>
-        Add step
-      </button>
+      <div className="border-t border-t-gray-200 py-3">
+        <button
+          className="empty:before:text-gray-40 w-fit rounded-md border border-transparent px-2 py-1 text-gray-400"
+          onClick={() => append({ description: "", title: "" })}
+        >
+          Add step...
+        </button>
+      </div>
     </>
   );
 }
@@ -120,16 +154,22 @@ function TaskInput({
   sectionIndex,
   taskIndex,
   register,
+  remove,
+  sectionRemove,
+  watch,
 }: {
   sectionIndex: number;
   taskIndex: number;
   register: UseFormRegister<typeof defaultValues>;
+  remove: UseFieldArrayRemove;
+  sectionRemove: UseFieldArrayRemove;
+  watch: UseFormWatch<typeof defaultValues>;
 }) {
   const [showDesc, setShowDesc] = useState(false);
+  const watchSections = watch("sections");
 
   return (
     <div
-      key={taskIndex}
       className={clsx(
         "group flex items-baseline gap-4 border-t-gray-200 py-3",
         taskIndex !== 0 ? "border-t" : "border-t-0"
@@ -160,50 +200,24 @@ function TaskInput({
         >
           <Article />
         </Button>
-        <Button square variant="outline" noBorder>
+        <Button
+          square
+          variant="outline"
+          noBorder
+          onClick={() => {
+            remove(taskIndex);
+
+            const lastTaskOnTheSection =
+              watchSections[sectionIndex]?.tasks.length === 0;
+
+            if (sectionIndex > 0 && lastTaskOnTheSection) {
+              sectionRemove(sectionIndex);
+            }
+          }}
+        >
           <X />
         </Button>
       </div>
-    </div>
-  );
-}
-
-function SettingsMenu() {
-  return (
-    <Popover className="relative">
-      <Popover.Button className="rounded-lg  border bg-transparent p-2.5 text-sm font-semibold text-gray-500 transition-colors hover:bg-gray-100  active:bg-gray-200">
-        <GearSix size={20} />
-      </Popover.Button>
-      <Popover.Panel className="absolute right-0 z-10 w-40 rounded-md bg-white p-4 shadow-md">
-        <div className="flex flex-col gap-2">
-          <MyToggle label="Section titles" />
-          <MyToggle label="Multiple sections" />
-        </div>
-      </Popover.Panel>
-    </Popover>
-  );
-}
-
-function MyToggle({ label }: { label: string }) {
-  const [enabled, setEnabled] = useState(false);
-
-  return (
-    <div className="flex gap-4">
-      <Switch
-        checked={enabled}
-        onChange={setEnabled}
-        className={`${
-          enabled ? "bg-blue-600" : "bg-gray-200"
-        } relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full`}
-      >
-        <span className="sr-only">Enable notifications</span>
-        <span
-          className={`${
-            enabled ? "translate-x-6" : "translate-x-1"
-          } inline-block h-4 w-4 transform rounded-full bg-white transition`}
-        />
-      </Switch>
-      <span className="text-base">{label}</span>
     </div>
   );
 }
