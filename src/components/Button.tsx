@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import React from "react";
 
 interface ButtonProps {
   children: string | JSX.Element;
@@ -7,6 +6,7 @@ interface ButtonProps {
   square?: boolean;
   size?: "md" | "sm";
   noBorder?: boolean;
+  type?: "submit" | "button" | "reset";
   onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
@@ -17,10 +17,11 @@ export default function Button({
   size,
   noBorder,
   onClick,
+  type,
 }: ButtonProps) {
   return (
     <button
-      {...{ onClick }}
+      {...{ onClick, type }}
       className={clsx(
         "rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 active:bg-blue-800",
         {
