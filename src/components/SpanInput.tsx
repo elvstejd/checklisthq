@@ -14,10 +14,15 @@ export function SpanInput({
 }: SpanInputProps) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLSpanElement>(null);
-
   useEffect(() => {
     console.log(value);
   }, [value]);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   return (
     <>
@@ -41,7 +46,7 @@ export function SpanInput({
         contentEditable
         suppressContentEditableWarning
         onInput={(e) => setValue(e.currentTarget.textContent as string)}
-      ></span>
+      />
       <style
         dangerouslySetInnerHTML={{
           __html: `.${uniqueClass}:empty::before { content: "${placeholder}"}`,
