@@ -5,18 +5,21 @@ interface SpanInputProps {
   placeholder: string;
   className: string;
   uniqueClass: string;
+  onChange: (value: string) => void;
 }
 
 export function SpanInput({
   placeholder,
   className,
   uniqueClass,
+  onChange,
 }: SpanInputProps) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLSpanElement>(null);
+
   useEffect(() => {
-    console.log(value);
-  }, [value]);
+    onChange(value);
+  }, [onChange, value]);
 
   useEffect(() => {
     if (inputRef.current) {
