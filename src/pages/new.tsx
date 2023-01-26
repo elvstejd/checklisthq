@@ -5,9 +5,10 @@ import type {
   Control,
   UseFieldArrayRemove,
   UseFormRegister,
+  SubmitHandler,
   UseFormWatch,
 } from "react-hook-form";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { SpanInput } from "../components/SpanInput";
 import { Article, X } from "phosphor-react";
 import Button from "../components/Button";
@@ -30,7 +31,7 @@ const defaultValues = {
 };
 
 export default function New() {
-  const { register, control, watch } = useForm({
+  const { register, control, watch, handleSubmit } = useForm({
     defaultValues,
   });
   const {
@@ -43,6 +44,10 @@ export default function New() {
   });
 
   const { showSectionTitles, showMultipleSections } = useSettingsStore();
+
+  const onSubmit: SubmitHandler<typeof defaultValues> = (data) => {
+    console.log(data);
+  };
 
   return (
     <>
@@ -57,46 +62,68 @@ export default function New() {
             <p className="my-10 text-center">repeatlist</p>
             <SettingsMenu />
           </div>
-          <div className="relative mb-4 flex justify-center">
-            <SpanInput
-              className="bold text-center text-2xl font-bold"
-              placeholder="Your Awesome Title Here"
-              uniqueClass="checklist-title"
-            />
-          </div>
-          {sections.map((section, sectionIndex) => (
-            <div
-              key={section.id}
-              className="mb-6 rounded-md border border-solid border-gray-200"
-            >
-              {showSectionTitles && (
-                <div className="border-b py-3 px-4">
+          <form onSubmit={(...args) => void handleSubmit(onSubmit)(...args)}>
+            <div className="relative mb-4 flex justify-center">
+              <Controller
+                control={control}
+                name="title"
+                render={({ field: { onChange } }) => (
                   <SpanInput
-                    placeholder="Section title"
-                    className="text-lg font-semibold text-gray-800"
-                    uniqueClass="section-title"
+                    className="bold text-center text-2xl font-bold"
+                    placeholder="Your Awesome Title Here"
+                    uniqueClass="checklist-title"
+                    onChange={onChange}
+                  />
+                )}
+              />
+            </div>
+            {sections.map((section, sectionIndex) => (
+              <div
+                key={section.id}
+                className="mb-6 rounded-md border border-solid border-gray-200"
+              >
+                {showSectionTitles && (
+                  <div className="border-b py-3 px-4">
+                    <Controller
+                      control={control}
+                      name={`sections.${sectionIndex}.title`}
+                      render={({ field: { onChange } }) => (
+                        <SpanInput
+                          placeholder="Section title"
+                          className="text-lg font-semibold text-gray-800"
+                          uniqueClass="section-title"
+                          onChange={onChange}
+                        />
+                      )}
+                    />
+                  </div>
+                )}
+                <div className="px-4">
+                  <TasksInputArray
+                    {...{
+                      control,
+                      register,
+                      sectionIndex,
+                      watch,
+                      sectionRemove: remove,
+                    }}
                   />
                 </div>
-              )}
-              <div className="px-4">
-                <TasksInputArray
-                  {...{ control, register }}
-                  sectionIndex={sectionIndex}
-                  sectionRemove={remove}
-                  watch={watch}
-                />
               </div>
+            ))}
+            {showMultipleSections && (
+              <button
+                onClick={() =>
+                  append({ tasks: [{ description: "", title: "" }], title: "" })
+                }
+              >
+                Add another section...
+              </button>
+            )}
+            <div className="flex justify-center">
+              <Button type="submit">Publish</Button>
             </div>
-          ))}
-          {showMultipleSections && (
-            <button
-              onClick={() =>
-                append({ tasks: [{ description: "", title: "" }], title: "" })
-              }
-            >
-              Add another section...
-            </button>
-          )}
+          </form>
         </div>
       </main>
     </>
@@ -130,12 +157,15 @@ function TasksInputArray({
       {tasks.map((task, taskIndex) => (
         <TaskInput
           key={task.id}
-          sectionIndex={sectionIndex}
-          taskIndex={taskIndex}
-          register={register}
-          remove={remove}
-          sectionRemove={sectionRemove}
-          watch={watch}
+          {...{
+            sectionIndex,
+            taskIndex,
+            register,
+            remove,
+            sectionRemove,
+            watch,
+            control,
+          }}
         />
       ))}
       <div className="border-t border-t-gray-200 py-3">
@@ -157,6 +187,7 @@ function TaskInput({
   remove,
   sectionRemove,
   watch,
+  control,
 }: {
   sectionIndex: number;
   taskIndex: number;
@@ -164,6 +195,7 @@ function TaskInput({
   remove: UseFieldArrayRemove;
   sectionRemove: UseFieldArrayRemove;
   watch: UseFormWatch<typeof defaultValues>;
+  control: Control<typeof defaultValues>;
 }) {
   const [showDesc, setShowDesc] = useState(false);
   const watchSections = watch("sections");
@@ -176,18 +208,26 @@ function TaskInput({
       )}
     >
       <div className="w-full">
-        <SpanInput
-          placeholder="Describe the step"
-          className="block font-medium text-slate-900"
-          uniqueClass="step-title"
+        <Controller
+          control={control}
+          name={`sections.${sectionIndex}.tasks.${taskIndex}.title`}
+          render={({ field: { onChange } }) => (
+            <SpanInput
+              placeholder="Describe the step"
+              className="block font-medium text-slate-900"
+              uniqueClass="step-title"
+              onChange={onChange}
+            />
+          )}
         />
+
         {showDesc && (
           <textarea
             placeholder="Add more information..."
             {...register(
               `sections.${sectionIndex}.tasks.${taskIndex}.description`
             )}
-            className="transition-color block w-full rounded-md border border-transparent bg-white px-2 py-1 text-sm text-gray-500 hover:border-gray-400"
+            className="transition-color hover:border-gray-40 block w-full rounded-md border border-transparent bg-white px-2 py-1 text-sm text-gray-500"
           />
         )}
       </div>
