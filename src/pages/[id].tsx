@@ -1,11 +1,30 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Item from "../components/Item";
-
-import { api } from "../utils/api";
+import { useRouter } from "next/router";
+import type { RouterOutputs } from "../utils/api";
+import { client } from "../utils/api";
+import { useEffect, useState } from "react";
 
 const Home: NextPage = () => {
-  const sections = api.checklist.getSections.useQuery({ id: "HELOO" });
+  const router = useRouter();
+  const { id } = router.query;
+  const [checklist, setChecklist] = useState<
+    RouterOutputs["checklist"]["getById"] | undefined
+  >();
+
+  useEffect(() => {
+    if (router.isReady) {
+      getChecklistData().catch(console.error);
+    }
+  }, [router.isReady]);
+
+  async function getChecklistData() {
+    const checklist = await client.checklist.getById.query({
+      id: id as string,
+    });
+    setChecklist(checklist);
+  }
 
   return (
     <>
@@ -18,18 +37,20 @@ const Home: NextPage = () => {
         <div className="mx-auto max-w-2xl">
           <p className="my-10 text-center">repeatlist</p>
           <h1 className="bold mb-4 text-center text-2xl font-bold">
-            How to Reach Flow Easily
+            {checklist?.title}
           </h1>
-          {sections.data?.map((section, idx) => (
+          {checklist?.sections?.map((section, idx) => (
             <div
               key={idx}
               className="mb-6 rounded-md border border-solid border-gray-200"
             >
-              <div className="border-b py-3 px-4">
-                <h2 className="text-lg font-semibold text-gray-800">
-                  {section.title}
-                </h2>
-              </div>
+              {section.title && (
+                <div className="border-b py-3 px-4">
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    {section.title}
+                  </h2>
+                </div>
+              )}
               <div className="px-4">
                 {section.tasks.map((task, idx) => (
                   <Item
