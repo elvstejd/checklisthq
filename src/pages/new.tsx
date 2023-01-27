@@ -1,12 +1,13 @@
 import clsx from "clsx";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   Control,
   UseFieldArrayRemove,
   UseFormRegister,
   SubmitHandler,
   UseFormWatch,
+  UseFormUnregister,
 } from "react-hook-form";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { SpanInput } from "../components/SpanInput";
@@ -14,6 +15,8 @@ import { Article, X } from "phosphor-react";
 import Button from "../components/Button";
 import { useSettingsStore } from "../stores";
 import { SettingsMenu } from "../components/SettingsMenu";
+import { api } from "../utils/api";
+import { useRouter } from "next/router";
 
 const defaultValues = {
   title: "",
@@ -31,9 +34,10 @@ const defaultValues = {
 };
 
 export default function New() {
-  const { register, control, watch, handleSubmit } = useForm({
+  const { register, unregister, control, watch, handleSubmit } = useForm({
     defaultValues,
   });
+
   const {
     fields: sections,
     append,
@@ -41,12 +45,39 @@ export default function New() {
   } = useFieldArray({
     control,
     name: "sections",
+    shouldUnregister: true,
   });
-
+  const router = useRouter();
   const { showSectionTitles, showMultipleSections } = useSettingsStore();
-
+  const { mutate: createMutation, isLoading } =
+    api.checklist.create.useMutation();
   const onSubmit: SubmitHandler<typeof defaultValues> = (data) => {
-    console.log(data);
+    const cleanData = {
+      ...data,
+      sections: data.sections.map((section) => {
+        const newSection = {
+          tasks: section.tasks.map((task) => {
+            const newTask = { title: task.title };
+            if (task.description) {
+              return task;
+            }
+            return newTask;
+          }),
+        };
+
+        if (section.title && showSectionTitles) {
+          return { ...newSection, title: section.title };
+        }
+
+        return newSection;
+      }),
+    };
+
+    createMutation(cleanData, {
+      onSuccess: (data) => {
+        void router.push(`/${data.id}`);
+      },
+    });
   };
 
   return (
@@ -103,6 +134,7 @@ export default function New() {
                     {...{
                       control,
                       register,
+                      unregister,
                       sectionIndex,
                       watch,
                       sectionRemove: remove,
@@ -121,7 +153,9 @@ export default function New() {
               </button>
             )}
             <div className="flex justify-center">
-              <Button type="submit">Publish</Button>
+              <Button loading={isLoading} type="submit">
+                Publish
+              </Button>
             </div>
           </form>
         </div>
@@ -134,12 +168,14 @@ function TasksInputArray({
   sectionIndex,
   control,
   register,
+  unregister,
   sectionRemove,
   watch,
 }: {
   sectionIndex: number;
   control: Control<typeof defaultValues>;
   register: UseFormRegister<typeof defaultValues>;
+  unregister: UseFormUnregister<typeof defaultValues>;
   sectionRemove: UseFieldArrayRemove;
   watch: UseFormWatch<typeof defaultValues>;
 }) {
@@ -161,6 +197,7 @@ function TasksInputArray({
             sectionIndex,
             taskIndex,
             register,
+            unregister,
             remove,
             sectionRemove,
             watch,
@@ -172,6 +209,7 @@ function TasksInputArray({
         <button
           className="empty:before:text-gray-40 w-fit rounded-md border border-transparent px-2 py-1 text-gray-400"
           onClick={() => append({ description: "", title: "" })}
+          type="button"
         >
           Add step...
         </button>
@@ -184,6 +222,7 @@ function TaskInput({
   sectionIndex,
   taskIndex,
   register,
+  unregister,
   remove,
   sectionRemove,
   watch,
@@ -192,6 +231,7 @@ function TaskInput({
   sectionIndex: number;
   taskIndex: number;
   register: UseFormRegister<typeof defaultValues>;
+  unregister: UseFormUnregister<typeof defaultValues>;
   remove: UseFieldArrayRemove;
   sectionRemove: UseFieldArrayRemove;
   watch: UseFormWatch<typeof defaultValues>;
@@ -199,6 +239,14 @@ function TaskInput({
 }) {
   const [showDesc, setShowDesc] = useState(false);
   const watchSections = watch("sections");
+
+  useEffect(() => {
+    if (!showDesc) {
+      unregister(`sections.${sectionIndex}.tasks.${taskIndex}.description`);
+    } else {
+      register(`sections.${sectionIndex}.tasks.${taskIndex}.description`);
+    }
+  }, [register, sectionIndex, showDesc, taskIndex, unregister]);
 
   return (
     <div
@@ -237,6 +285,7 @@ function TaskInput({
           noBorder
           variant="outline"
           onClick={() => setShowDesc((v) => !v)}
+          type="button"
         >
           <Article />
         </Button>
@@ -244,6 +293,7 @@ function TaskInput({
           square
           variant="outline"
           noBorder
+          type="button"
           onClick={() => {
             remove(taskIndex);
 

@@ -1,62 +1,56 @@
+import { nanoid } from "../../nanoid";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
+
+const checklistSchema = z.object({
+  title: z.string().min(1),
+  sections: z
+    .array(
+      z.object({
+        title: z.string().min(1).optional(),
+        tasks: z
+          .array(
+            z.object({
+              title: z.string().min(1),
+              description: z.string().min(1).optional(),
+            })
+          )
+          .min(2)
+          .max(30),
+      })
+    )
+    .min(1)
+    .max(10),
+});
 
 export const checklistRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
+  create: publicProcedure
+    .input(checklistSchema)
+    .mutation(async ({ ctx, input }) => {
+      const id = await nanoid();
+      const result = await ctx.prisma.checklist.create({
+        data: { schema: JSON.stringify(input), id, userId: "anon" },
+      });
+      return { id: result.id };
     }),
-
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
-  }),
-
-  getSections: publicProcedure
+  getById: publicProcedure
     .input(z.object({ id: z.string() }))
-    .query(({ input }) => {
-      return [
-        {
-          title: "Avoid breaking focus",
-          tasks: [
-            {
-              id: 1,
-              title: "Tidy up your environment",
-              description:
-                "Messy rooms, beds, tables, will hurt your concentration.",
-            },
-            {
-              id: 2,
-              title: "Remove noise from your environment",
-              description:
-                "If you must, wear headphones that cancel noise or move to a quieter environment.",
-            },
-            {
-              id: 3,
-              title: "Give flow at least 25 minutes to come",
-            },
-          ],
-        },
-        {
-          title: "Improve your focus",
-          tasks: [
-            {
-              id: 1,
-              title: "Play instrumental music",
-              description:
-                "The brain is hardwired to listen to human voices. Music with vocals is like multitasking.",
-              done: false,
-            },
-            {
-              id: 2,
-              title: "Work in 90 minutes",
-              done: false,
-            },
-          ],
-        },
-      ];
+    .output(checklistSchema)
+    .query(async ({ ctx, input }) => {
+      const checklist = await ctx.prisma.checklist.findUniqueOrThrow({
+        where: { id: input.id },
+      });
+
+      if (checklist) {
+        return JSON.parse(checklist.schema as string) as z.TypeOf<
+          typeof checklistSchema
+        >;
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred, please try again later.",
+      });
     }),
 });
