@@ -17,6 +17,7 @@ import { useSettingsStore } from "../stores";
 import { SettingsMenu } from "../components/SettingsMenu";
 import { api } from "../utils/api";
 import { useRouter } from "next/router";
+import { Brand } from "../components/Brand";
 
 const defaultValues = {
   title: "",
@@ -88,13 +89,13 @@ export default function New() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className="mx-auto max-w-2xl">
-          <div className="flex items-center justify-between">
-            <p className="my-10 text-center">repeatlist</p>
+        <div className="mx-auto max-w-2xl px-4">
+          <div className="my-4 flex items-center justify-between">
+            <Brand />
             <SettingsMenu />
           </div>
           <form onSubmit={(...args) => void handleSubmit(onSubmit)(...args)}>
-            <div className="relative mb-4 flex justify-center">
+            <div className="relative mt-3 mb-4 flex justify-center">
               <Controller
                 control={control}
                 name="title"
