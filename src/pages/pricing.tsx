@@ -17,7 +17,7 @@ const Pricing: NextPage = () => {
       <main>
         <h1 className="py-12 text-center text-4xl font-bold">Pricing</h1>
         <div className="mx-auto mb-24 max-w-6xl px-4">
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             {tiers.map((tier) => (
               <div
                 key={tier.title}

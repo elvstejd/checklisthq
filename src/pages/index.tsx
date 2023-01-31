@@ -22,26 +22,26 @@ const Home: NextPage = () => {
       <Header />
       <main>
         <section>
-          <div className="mx-auto max-w-6xl px-4 pt-28">
-            <div className="grid grid-cols-12">
-              <div className="col-span-5">
-                <h1 className="mt-3 text-5xl font-bold">
+          <div className="mx-auto max-w-6xl px-4 pt-16 lg:pt-28">
+            <div className="flex flex-col-reverse lg:grid lg:grid-cols-12">
+              <div className="col-span-12 mx-auto max-w-2xl lg:col-span-5">
+                <h1 className="mt-3 text-center text-4xl font-bold lg:text-left lg:text-5xl">
                   Make lightning strike twice with checklist templates
                 </h1>
-                <p className="mt-5 text-lg">
+                <p className="mt-5 text-center text-lg lg:text-left">
                   Sometimes a reusable checklist is all you need to ensure your
                   processes yield perfection every single time.
                 </p>
-                <div className="mt-4 w-fit">
-                  <Link href={"/new"}>
+                <div className="mt-10 lg:mt-4 lg:w-fit">
+                  <Link href={"/new"} className="flex justify-center">
                     <Button>Create a checklist now – FREE</Button>
                   </Link>
-                  <p className="mt-2 text-sm text-gray-500">
+                  <p className="mt-2 text-center text-sm text-gray-500 lg:text-left">
                     No account required.
                   </p>
                 </div>
               </div>
-              <div className="col-span-7">
+              <div className="col-span-12 mx-auto max-w-2xl lg:col-span-7">
                 <div className="relative">
                   <Image
                     src={"/visual.png"}
@@ -59,7 +59,7 @@ const Home: NextPage = () => {
             <h2 className="mt-32 mb-12 text-center text-3xl font-semibold">
               Use cases
             </h2>
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {useCases.map((useCase) => {
                 const Icon = useCase.icon;
 
