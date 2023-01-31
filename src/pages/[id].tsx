@@ -6,6 +6,7 @@ import type { RouterOutputs } from "../utils/api";
 import { client } from "../utils/api";
 import { useEffect, useState } from "react";
 import { Brand } from "../components/Brand";
+import { Footer } from "../components/Footer";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -36,7 +37,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <header>
-        <div className="mx-auto my-8 flex max-w-2xl items-center px-4">
+        <div className="mx-auto my-8 flex max-w-2xl items-center justify-center px-4">
           <Brand />
         </div>
       </header>
@@ -72,6 +73,7 @@ const Home: NextPage = () => {
           ))}
         </div>
       </main>
+      <Footer showReportBtn />
     </>
   );
 };
