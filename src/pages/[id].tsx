@@ -7,6 +7,7 @@ import { client } from "../utils/api";
 import { useEffect, useState } from "react";
 import { Brand } from "../components/Brand";
 import { Footer } from "../components/Footer";
+import clsx from "clsx";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -43,6 +44,7 @@ const Home: NextPage = () => {
       </header>
       <main>
         <div className="mx-auto max-w-2xl px-4">
+          {!checklist && <LoadingSkeleton />}
           <h1 className="bold mb-4 text-center text-2xl font-bold">
             {checklist?.title}
           </h1>
@@ -79,3 +81,33 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+function LoadingSkeleton() {
+  return (
+    <div role="status" className="animate-pulse">
+      <div className="flex justify-center">
+        <div className="mx-24 mb-4 h-8 w-full rounded-md bg-gray-200"></div>
+      </div>
+
+      <div className="mb-6 rounded-md border border-solid border-gray-200 px-4">
+        {["", "", "", "", "", ""].map((_, k) => (
+          <div
+            key={k}
+            className={clsx(
+              "group flex cursor-pointer items-center gap-4 border-t-gray-200 py-3",
+              k !== 0 ? "border-t" : "border-t-0"
+            )}
+          >
+            <div className="flex aspect-square h-10 items-center justify-center rounded-full bg-gray-200"></div>
+            <div className="w-full">
+              <div className="h-4 w-24 rounded-sm bg-gray-200"></div>
+              <div className="mt-1 h-8 w-48 rounded-sm bg-gray-200"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <span className="sr-only">Loading...</span>
+    </div>
+  );
+}
