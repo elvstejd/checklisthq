@@ -3,7 +3,7 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { api } from "../utils/api";
 import { Inter } from "@next/font/google";
-
+import "sal.js/dist/sal.css";
 import "../styles/globals.css";
 
 const inter = Inter({

@@ -4,11 +4,17 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { Barbell, GearSix, GraduationCap, HouseLine } from "phosphor-react";
+import { useEffect } from "react";
 import Button from "../components/Button";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
+import sal from "sal.js";
 
 const Home: NextPage = () => {
+  useEffect(() => {
+    sal();
+  }, []);
+
   return (
     <>
       <Head>
@@ -42,7 +48,13 @@ const Home: NextPage = () => {
                 </div>
               </div>
               <div className="col-span-12 mx-auto max-w-2xl lg:col-span-7">
-                <div className="relative">
+                <div
+                  data-sal="fade"
+                  data-sal-easing="ease-out"
+                  data-sal-duration="500"
+                  data-sal-delay="200"
+                  className="relative"
+                >
                   <Image
                     src={"/visual.png"}
                     alt="laptop and phone showing different checklists"
@@ -60,11 +72,18 @@ const Home: NextPage = () => {
               Use cases
             </h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {useCases.map((useCase) => {
+              {useCases.map((useCase, idx) => {
                 const Icon = useCase.icon;
 
                 return (
-                  <div key={useCase.title} className="rounded-md border p-6">
+                  <div
+                    data-sal="slide-up"
+                    data-sal-easing="ease-out"
+                    data-sal-duration="400"
+                    data-sal-delay={200 + (idx + 1) * 100}
+                    key={useCase.title}
+                    className="rounded-md border p-6"
+                  >
                     <div
                       className={clsx("w-fit rounded-md p-2", {
                         "bg-yellow-100": useCase.color === "yellow",
