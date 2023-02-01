@@ -17,7 +17,7 @@ const Pricing: NextPage = () => {
       <main>
         <h1 className="py-12 text-center text-4xl font-bold">Pricing</h1>
         <div className="mx-auto mb-24 max-w-6xl px-4">
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
             {tiers.map((tier) => (
               <div
                 key={tier.title}
@@ -73,20 +73,17 @@ const tiers = [
     monthly: "0",
     pros: ["Unlimited checklists", "Anonymous checklists"],
     cons: ["Deleted after 24 hours"],
-    cta: "Create FREE Checklist Now",
-  },
-  {
-    title: "Free w/ Account",
-    monthly: "0",
-    pros: ["Save checklists", "Manage checklists"],
-    cons: ["10 limit"],
-    cta: "Create My Account",
+    cta: "Create New FREE Checklist Now",
   },
   {
     title: "Premium",
     monthly: "12.99",
-    pros: ["Unlimited checklists", "Save checklists", "Manage checklists"],
-    cta: "Go Premium",
+    pros: [
+      "Unlimited checklists",
+      "Save your checklists",
+      "Manage your checklists",
+    ],
+    cta: "Start My 30-day FREE Trial",
     isPremium: true,
   },
 ];
