@@ -28,10 +28,7 @@ export function Header() {
               </ul>
             </div>
           </div>
-          <div className="hidden gap-1 md:flex">
-            <Button variant="text">Log In</Button>
-            <Button variant="outline">Create my account</Button>
-          </div>
+          <div className="hidden md:block">{authButtons}</div>
           <div className="md:hidden">
             <Popover>
               {({ open }) => (
@@ -58,6 +55,7 @@ export function Header() {
                           </li>
                         ))}
                       </ul>
+                      {authButtons}
                     </div>
                   </Popover.Panel>
                 </>
@@ -69,6 +67,17 @@ export function Header() {
     </header>
   );
 }
+
+const authButtons = (
+  <div className="mb-4 flex flex-col items-center justify-between gap-1 rounded-md border p-4 md:mb-0 md:flex-row  md:border-0 md:p-0">
+    <Link href="/login">
+      <Button variant="text">Log In</Button>
+    </Link>
+    <Link href="/signup">
+      <Button variant="outline">Create my account</Button>
+    </Link>
+  </div>
+);
 
 const navLinks = [
   {
