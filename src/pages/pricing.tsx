@@ -72,13 +72,22 @@ const tiers = [
     title: "Free (No account required)",
     monthly: "0",
     pros: ["1 free checklist", "Anonymous checklists"],
-    cons: ["Checklist deleted after 24 hours"],
+    cons: [
+      "Checklist deleted after 24 hours",
+      "No descriptions",
+      "No multiple sections",
+    ],
     cta: "Create New FREE Checklist Now",
   },
   {
     title: "30-Day trial",
     monthly: "0",
-    pros: ["3 checklists", "Save your checklists", "Manage your checklists"],
+    pros: [
+      "3 checklists",
+      "Save and manage your checklists",
+      "Descriptions",
+      "Multiple sections",
+    ],
     cta: "Start my 30-day FREE Trial",
   },
   {
@@ -86,8 +95,9 @@ const tiers = [
     monthly: "19.99",
     pros: [
       "Unlimited checklists",
-      "Save your checklists",
-      "Manage your checklists",
+      "Save and manage your checklists",
+      "Descriptions",
+      "Multiple sections",
     ],
     cta: "Go Premium",
   },
