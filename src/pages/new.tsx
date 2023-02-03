@@ -1,5 +1,4 @@
 import Head from "next/head";
-import { SettingsMenu } from "../components/SettingsMenu";
 import { Brand } from "../components/Brand";
 import { ChecklistForm } from "../components/ChecklistForm";
 
@@ -13,9 +12,8 @@ export default function New() {
       </Head>
       <main>
         <div className="mx-auto max-w-2xl px-4">
-          <div className="my-4 flex items-center justify-between">
-            <Brand />
-            <SettingsMenu />
+          <div className="my-4 flex items-center justify-center">
+            <Brand hideName={true} />
           </div>
           <ChecklistForm />
         </div>
