@@ -4,7 +4,7 @@ import Link from "next/link";
 export function Brand() {
   return (
     <Link href={"/"}>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <div className="relative aspect-square h-8">
           <Image
             src="/logo.png"
@@ -14,7 +14,9 @@ export function Brand() {
             fill
           />
         </div>
-        <div className="font-medium">RepeatList</div>
+        <div className="hidden font-semibold text-gray-700 md:block">
+          ActionableHQ
+        </div>
       </div>
     </Link>
   );
