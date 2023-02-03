@@ -30,7 +30,7 @@ export default function Button({
             variant === "outline" || variant === "text",
         },
         {
-          "px-2.5": square === true,
+          "px-2": square === true,
         },
         {
           "border-none": noBorder === true,
