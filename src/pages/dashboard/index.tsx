@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Eye, Pencil, Plus } from "phosphor-react";
 import Button from "../../components/Button";
 import { Shell } from "../../components/Shell";
@@ -6,7 +7,7 @@ export default function Dashboard() {
   return (
     <Shell
       pageTitle="Dashboard"
-      currentPath="/dashboard"
+      activePath="/dashboard"
       pageDescription="You can manage your checklists from here."
     >
       <h2 className="mt-8 mb-4 text-sm font-bold text-gray-400">CHECKLISTS</h2>
@@ -24,12 +25,14 @@ export default function Dashboard() {
             </Button>
           </div>
         </div>
-        <button className="group flex border-spacing-1 items-center justify-center rounded-md border-2 border-dashed p-4 py-5 transition-colors hover:border-blue-500">
-          <div className="flex items-center gap-2 font-medium text-gray-400 transition-colors group-hover:text-blue-900 ">
-            <Plus size={18} weight="bold" />
-            <span>New checklist</span>
-          </div>
-        </button>
+        <Link href="/dashboard/new">
+          <button className="group flex h-full w-full border-spacing-1 items-center justify-center rounded-md border-2 border-dashed p-4 py-5 transition-colors hover:border-blue-500">
+            <div className="flex items-center gap-2 font-medium text-gray-400 transition-colors group-hover:text-blue-900 ">
+              <Plus size={18} weight="bold" />
+              <span>New checklist</span>
+            </div>
+          </button>
+        </Link>
       </div>
     </Shell>
   );
