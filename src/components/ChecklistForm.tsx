@@ -71,7 +71,7 @@ export function ChecklistForm() {
     shouldUnregister: true,
   });
   const router = useRouter();
-  const { showSectionTitles, showMultipleSections } = useSettingsStore();
+  const { enableMultipleSections } = useSettingsStore();
   const { mutate: createMutation, isLoading } =
     api.checklist.create.useMutation();
   const onSubmit: SubmitHandler<ChecklistSchema> = (data) => {
@@ -88,7 +88,7 @@ export function ChecklistForm() {
           }),
         };
 
-        if (section.title && showSectionTitles) {
+        if (section.title && enableMultipleSections) {
           return { ...newSection, title: section.title };
         }
 
@@ -125,7 +125,7 @@ export function ChecklistForm() {
             key={section.id}
             className="mb-6 rounded-md border border-solid border-gray-200"
           >
-            {showSectionTitles && (
+            {enableMultipleSections && (
               <div className="border-b py-3 px-4">
                 <Controller
                   control={control}
@@ -155,7 +155,7 @@ export function ChecklistForm() {
             </div>
           </div>
         ))}
-        {showMultipleSections && (
+        {enableMultipleSections && (
           <button
             onClick={() =>
               append({ tasks: [{ description: "", title: "" }], title: "" })
