@@ -18,6 +18,7 @@ import { SettingsMenu } from "../components/SettingsMenu";
 import { api } from "../utils/api";
 import { useRouter } from "next/router";
 import { Brand } from "../components/Brand";
+import { z } from "zod";
 
 const defaultValues = {
   title: "",
@@ -34,10 +35,34 @@ const defaultValues = {
   ],
 };
 
+const checklistSchema = z.object({
+  title: z.string().min(1),
+  sections: z
+    .array(
+      z.object({
+        title: z.string().min(1).optional(),
+        tasks: z
+          .array(
+            z.object({
+              title: z.string().min(1),
+              description: z.string().min(1).optional(),
+            })
+          )
+          .min(2)
+          .max(30),
+      })
+    )
+    .min(1)
+    .max(10),
+});
+
+type ChecklistSchema = z.infer<typeof checklistSchema>;
+
 export default function New() {
-  const { register, unregister, control, watch, handleSubmit } = useForm({
-    defaultValues,
-  });
+  const { register, unregister, control, watch, handleSubmit } =
+    useForm<ChecklistSchema>({
+      defaultValues,
+    });
 
   const {
     fields: sections,
@@ -52,7 +77,7 @@ export default function New() {
   const { showSectionTitles, showMultipleSections } = useSettingsStore();
   const { mutate: createMutation, isLoading } =
     api.checklist.create.useMutation();
-  const onSubmit: SubmitHandler<typeof defaultValues> = (data) => {
+  const onSubmit: SubmitHandler<ChecklistSchema> = (data) => {
     const cleanData = {
       ...data,
       sections: data.sections.map((section) => {
@@ -174,11 +199,11 @@ function TasksInputArray({
   watch,
 }: {
   sectionIndex: number;
-  control: Control<typeof defaultValues>;
-  register: UseFormRegister<typeof defaultValues>;
-  unregister: UseFormUnregister<typeof defaultValues>;
+  control: Control<ChecklistSchema>;
+  register: UseFormRegister<ChecklistSchema>;
+  unregister: UseFormUnregister<ChecklistSchema>;
   sectionRemove: UseFieldArrayRemove;
-  watch: UseFormWatch<typeof defaultValues>;
+  watch: UseFormWatch<ChecklistSchema>;
 }) {
   const {
     fields: tasks,
@@ -231,12 +256,12 @@ function TaskInput({
 }: {
   sectionIndex: number;
   taskIndex: number;
-  register: UseFormRegister<typeof defaultValues>;
-  unregister: UseFormUnregister<typeof defaultValues>;
+  register: UseFormRegister<ChecklistSchema>;
+  unregister: UseFormUnregister<ChecklistSchema>;
   remove: UseFieldArrayRemove;
   sectionRemove: UseFieldArrayRemove;
-  watch: UseFormWatch<typeof defaultValues>;
-  control: Control<typeof defaultValues>;
+  watch: UseFormWatch<ChecklistSchema>;
+  control: Control<ChecklistSchema>;
 }) {
   const [showDesc, setShowDesc] = useState(false);
   const watchSections = watch("sections");
