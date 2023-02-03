@@ -4,10 +4,12 @@ export function Toggle({
   label,
   onChange,
   value: enabled,
+  description,
 }: {
   label: string;
   onChange: (value: boolean) => void;
   value: boolean;
+  description?: string;
 }) {
   return (
     <div className="flex gap-4">
@@ -16,16 +18,19 @@ export function Toggle({
         onChange={onChange}
         className={`${
           enabled ? "bg-blue-600" : "bg-gray-200"
-        } relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full`}
+        } relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full`}
       >
         <span className="sr-only">{label}</span>
         <span
           className={`${
-            enabled ? "translate-x-6" : "translate-x-1"
-          } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+            enabled ? "translate-x-5" : "translate-x-1"
+          } inline-block h-3 w-3 transform rounded-full bg-white transition`}
         />
       </Switch>
-      <span className="text-base">{label}</span>
+      <div>
+        <span className="text-sm font-medium">{label}</span>
+        <p className="text-sm text-gray-500">{description}</p>
+      </div>
     </div>
   );
 }
