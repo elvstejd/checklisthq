@@ -1,7 +1,12 @@
+import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 
-export function Brand() {
+interface BrandProps {
+  hideName?: boolean;
+}
+
+export function Brand({ hideName }: BrandProps) {
   return (
     <Link href={"/"}>
       <div className="flex items-center gap-3">
@@ -14,8 +19,10 @@ export function Brand() {
             fill
           />
         </div>
-        <div className="hidden font-semibold text-gray-700 md:block">
-          ActionableHQ
+        <div className={clsx(hideName && "hidden")}>
+          <div className={"hidden font-semibold text-gray-700 md:block"}>
+            ActionableHQ
+          </div>
         </div>
       </div>
     </Link>
