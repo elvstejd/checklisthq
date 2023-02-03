@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Brand } from "../components/Brand";
-import { ChecklistForm } from "../components/ChecklistForm";
+import { FreeChecklistForm } from "../components/FreeChecklistForm";
 
 export default function New() {
   return (
@@ -15,7 +15,7 @@ export default function New() {
           <div className="my-4 flex items-center justify-center">
             <Brand hideName={true} />
           </div>
-          <ChecklistForm />
+          <FreeChecklistForm />
         </div>
       </main>
     </>
