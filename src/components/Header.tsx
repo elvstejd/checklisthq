@@ -1,5 +1,6 @@
 import { Popover } from "@headlessui/react";
 import clsx from "clsx";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { List, X } from "phosphor-react";
 import React from "react";
@@ -28,7 +29,9 @@ export function Header() {
               </ul>
             </div>
           </div>
-          <div className="hidden md:block">{authButtons}</div>
+          <div className="hidden md:block">
+            <NavButtons />
+          </div>
           <div className="md:hidden">
             <Popover>
               {({ open }) => (
@@ -55,7 +58,7 @@ export function Header() {
                           </li>
                         ))}
                       </ul>
-                      {authButtons}
+                      <NavButtons />
                     </div>
                   </Popover.Panel>
                 </>
@@ -68,6 +71,13 @@ export function Header() {
   );
 }
 
+const NavButtons = () => {
+  const { status } = useSession();
+
+  if (status === "authenticated") return dashboardButton;
+  return authButtons;
+};
+
 const authButtons = (
   <div className="mb-4 flex flex-col items-center justify-between gap-1 rounded-md border p-4 md:mb-0 md:flex-row  md:border-0 md:p-0">
     <Link href="/login">
@@ -75,6 +85,14 @@ const authButtons = (
     </Link>
     <Link href="/signup">
       <Button variant="outline">Create my account</Button>
+    </Link>
+  </div>
+);
+
+const dashboardButton = (
+  <div className="mb-4 flex flex-col items-center justify-between gap-1 rounded-md border p-4 md:mb-0 md:flex-row  md:border-0 md:p-0">
+    <Link href="/dashboard">
+      <Button variant="outline">Go to Dashboard</Button>
     </Link>
   </div>
 );
