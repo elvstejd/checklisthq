@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EnvelopeSimple } from "phosphor-react";
+// import { EnvelopeSimple } from "phosphor-react";
 import React from "react";
 import Button from "../components/Button";
 import { signIn } from "next-auth/react";
@@ -26,12 +26,12 @@ export default function SignUp() {
               Continue with Google
             </div>
           </Button>
-          <Button variant="outline">
+          {/* <Button variant="outline">
             <div className="flex items-center">
               <EnvelopeSimple size={25} className="mr-3" />
               Continue with Email
             </div>
-          </Button>
+          </Button> */}
         </div>
         <div className="mt-8 text-center text-sm">
           <span>Already have an account?</span>
