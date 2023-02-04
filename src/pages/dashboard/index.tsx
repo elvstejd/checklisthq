@@ -41,7 +41,7 @@ function Card({ title, id }: { title: string; id: string }) {
         <Button variant="outline" square>
           <Pencil size={18} />
         </Button>
-        <Link href={`/${id}`}>
+        <Link href={`/${id}`} target="_blank">
           <Button variant="outline" square>
             <Eye size={18} />
           </Button>
