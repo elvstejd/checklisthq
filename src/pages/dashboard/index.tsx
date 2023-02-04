@@ -15,10 +15,6 @@ export default function Dashboard() {
     >
       <h2 className="mt-8 mb-4 text-sm font-bold text-gray-400">CHECKLISTS</h2>
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {checklists?.map((checklist) => (
-          <Card key={checklist.id} id={checklist.id} title={checklist.title} />
-        ))}
-
         <Link href="/dashboard/new">
           <button className="group flex h-full w-full border-spacing-1 items-center justify-center rounded-md border-2 border-dashed p-4 py-5 transition-colors hover:border-blue-500">
             <div className="flex items-center gap-2 font-medium text-gray-400 transition-colors group-hover:text-blue-900 ">
@@ -27,6 +23,9 @@ export default function Dashboard() {
             </div>
           </button>
         </Link>
+        {checklists?.map((checklist) => (
+          <Card key={checklist.id} id={checklist.id} title={checklist.title} />
+        ))}
       </div>
     </Shell>
   );
