@@ -116,6 +116,7 @@ export function ChecklistForm() {
                 placeholder="Your Awesome Title Here"
                 uniqueClass="checklist-title"
                 onChange={onChange}
+                autoFocus
               />
             )}
           />
@@ -136,6 +137,7 @@ export function ChecklistForm() {
                       className="text-lg font-semibold text-gray-800"
                       uniqueClass="section-title"
                       onChange={onChange}
+                      autoFocus={sectionIndex !== 0}
                     />
                   )}
                 />
@@ -275,6 +277,7 @@ function TaskInput({
               className="block font-medium text-slate-900"
               uniqueClass="step-title"
               onChange={onChange}
+              autoFocus={taskIndex !== 0}
             />
           )}
         />
