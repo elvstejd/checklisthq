@@ -16,11 +16,7 @@ export default function Dashboard() {
       <h2 className="mt-8 mb-4 text-sm font-bold text-gray-400">CHECKLISTS</h2>
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {checklists?.map((checklist) => (
-          <Card
-            key={checklist.id}
-            id={checklist.id}
-            title={checklist.title as string}
-          />
+          <Card key={checklist.id} id={checklist.id} title={checklist.title} />
         ))}
 
         <Link href="/dashboard/new">
