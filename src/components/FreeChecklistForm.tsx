@@ -107,6 +107,7 @@ export function FreeChecklistForm() {
                 placeholder="Your Awesome Title Here"
                 uniqueClass="checklist-title"
                 onChange={onChange}
+                autoFocus
               />
             )}
           />
@@ -231,6 +232,7 @@ function TaskInput({
               className="block font-medium text-slate-900"
               uniqueClass="step-title"
               onChange={onChange}
+              autoFocus={taskIndex !== 0}
             />
           )}
         />
