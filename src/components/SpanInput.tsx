@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface SpanInputProps {
   placeholder: string;
@@ -39,13 +39,21 @@ export function SpanInput({
           uniqueClass
         )}
         role="textbox"
-        onClick={() => {
+        onPaste={(event: React.ClipboardEvent) => {
+          const text = (event.clipboardData || event.clipboardData).getData(
+            "text"
+          );
+          event.preventDefault();
+          document.execCommand("insertText", false, text);
+        }}
+        onDrop={(event) => {
+          const text = event.dataTransfer.getData("text");
+          event.preventDefault();
+
           if (inputRef.current) {
-            const range = document.createRange();
-            range.selectNodeContents(inputRef.current);
-            const sel = window.getSelection();
-            sel?.removeAllRanges();
-            sel?.addRange(range);
+            inputRef.current.textContent += text;
+            if (inputRef.current.textContent)
+              setValue(inputRef.current.textContent);
           }
         }}
         contentEditable
