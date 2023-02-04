@@ -6,6 +6,7 @@ interface SpanInputProps {
   className: string;
   uniqueClass: string;
   onChange: (value: string) => void;
+  autoFocus?: boolean;
 }
 
 export function SpanInput({
@@ -13,6 +14,7 @@ export function SpanInput({
   className,
   uniqueClass,
   onChange,
+  autoFocus,
 }: SpanInputProps) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLSpanElement>(null);
@@ -22,10 +24,10 @@ export function SpanInput({
   }, [onChange, value]);
 
   useEffect(() => {
-    if (inputRef.current) {
+    if (inputRef.current && autoFocus) {
       inputRef.current.focus();
     }
-  }, []);
+  }, [autoFocus]);
 
   return (
     <>
