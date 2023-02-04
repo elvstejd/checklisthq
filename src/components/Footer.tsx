@@ -10,7 +10,7 @@ export function Footer({ showReportBtn }: FooterProps) {
       <div className="mx-auto max-w-6xl px-4">
         <div className="flex flex-col items-center justify-center gap-2 py-12 md:flex-row md:justify-between md:gap-0">
           {showReportBtn && (
-            <button className="text-sm md:order-2">Report</button>
+            <button className="hidden text-sm md:order-2">Report</button>
           )}
           <ul className="flex gap-4 text-sm md:order-3">
             <li>
