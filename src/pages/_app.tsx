@@ -5,6 +5,7 @@ import { api } from "../utils/api";
 import { Inter } from "@next/font/google";
 import "sal.js/dist/sal.css";
 import "../styles/globals.css";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,6 +21,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <div className={`${inter.variable} font-sans`}>
         <Component {...pageProps} />
+        <Toaster position="bottom-center" />
       </div>
     </SessionProvider>
   );
