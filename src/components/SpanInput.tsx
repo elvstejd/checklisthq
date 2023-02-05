@@ -7,6 +7,7 @@ interface SpanInputProps {
   uniqueClass: string;
   onChange: (value: string) => void;
   autoFocus?: boolean;
+  error?: string;
 }
 
 export function SpanInput({
@@ -15,6 +16,7 @@ export function SpanInput({
   uniqueClass,
   onChange,
   autoFocus,
+  error,
 }: SpanInputProps) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLSpanElement>(null);
@@ -35,8 +37,12 @@ export function SpanInput({
         ref={inputRef}
         className={clsx(
           className,
-          "w-fit cursor-text rounded-md border border-transparent px-2 py-1 empty:before:text-gray-400 hover:border-gray-400 focus-visible:bg-white",
-          uniqueClass
+          "inline-block w-fit cursor-text rounded-md border border-transparent px-2 py-1 empty:before:text-gray-400 hover:border-gray-400 focus-visible:bg-white",
+          uniqueClass,
+          {
+            "border-red-500 bg-red-50 outline-none hover:border-red-500 focus-visible:bg-red-50":
+              error,
+          }
         )}
         role="textbox"
         onPaste={(event: React.ClipboardEvent) => {
