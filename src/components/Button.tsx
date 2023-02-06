@@ -8,6 +8,7 @@ interface ButtonProps {
   noBorder?: boolean;
   type?: "submit" | "button" | "reset";
   onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  color?: "danger" | "normal";
 }
 
 export default function Button({
@@ -18,6 +19,7 @@ export default function Button({
   onClick,
   loading,
   type,
+  color,
 }: ButtonProps) {
   return (
     <button
@@ -37,6 +39,10 @@ export default function Button({
         },
         {
           "border-none": variant === "text",
+        },
+        {
+          "bg-red-600 hover:bg-red-700 active:bg-red-800":
+            !variant || (variant === "default" && color === "danger"),
         }
       )}
     >
