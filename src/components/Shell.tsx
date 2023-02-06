@@ -5,10 +5,11 @@ import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ArrowLeft, Bell, List, SignOut, Spinner, X } from "phosphor-react";
-import React, { Fragment, useEffect } from "react";
+import { ArrowLeft, Bell, List, SignOut, X } from "phosphor-react";
+import { Fragment, useEffect } from "react";
 import { Brand } from "../components/Brand";
 import { env } from "../env/client.mjs";
+import { LoadingScreen } from "./LoadingScreen";
 
 interface ShellProps {
   pageTitle: string;
@@ -253,12 +254,4 @@ function RedirectToDashboard() {
   }, [router]);
 
   return <LoadingScreen />;
-}
-
-function LoadingScreen() {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <Spinner size={28} className="animate-spin" />
-    </div>
-  );
 }
