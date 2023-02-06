@@ -18,7 +18,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      getChecklistData().catch(console.error);
+      void getChecklistData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
