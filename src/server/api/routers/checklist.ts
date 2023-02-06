@@ -4,19 +4,29 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
-export const freeChecklistSchema = z.object({
-  title: z.string().min(1).max(200),
+const freeChecklistSchema = z.object({
+  title: z
+    .string()
+    .min(1, "Missing checklist title")
+    .max(150, "Checklist title is too long. Please keep it under 150 chars."),
   sections: z
     .array(
       z.object({
         tasks: z
           .array(
             z.object({
-              title: z.string().min(1).max(200),
+              title: z
+                .string()
+                .min(1, "Task title appears to be empty. Please provide one.")
+                .max(100, "Task title must not surpass 100 characters."),
+              description: z.string().max(500).optional(),
             })
           )
-          .min(2)
-          .max(30),
+          .min(2, "Please add another task, a minimum of 2 are required.")
+          .max(
+            30,
+            "There is a limit of 30 tasks per section. If you need more please contact us."
+          ),
       })
     )
     .min(1)
