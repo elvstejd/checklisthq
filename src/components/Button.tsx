@@ -42,7 +42,7 @@ export default function Button({
         },
         {
           "bg-red-600 hover:bg-red-700 active:bg-red-800":
-            !variant || (variant === "default" && color === "danger"),
+            (!variant || variant === "default") && color === "danger",
         }
       )}
     >
