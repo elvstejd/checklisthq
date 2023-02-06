@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import clsx from "clsx";
+import Head from "next/head";
 import Link from "next/link";
 import { ArrowLeft, Bell, List, X } from "phosphor-react";
 import React, { Fragment } from "react";
@@ -23,6 +24,10 @@ export function Shell({
 }: ShellProps) {
   return (
     <>
+      <Head>
+        <title>{pageTitle} | Omilist</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <div className="min-h-full">
         <Disclosure as="nav" className="border-b border-gray-200 bg-white">
           {({ open }) => (
