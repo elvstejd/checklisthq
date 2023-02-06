@@ -34,7 +34,7 @@ export default function Login() {
         </div>
         <div className="mt-8 text-center text-sm">
           <span>No account yet?</span>
-          <Link href="/login">
+          <Link href="/signup">
             <span className="ml-2 font-bold text-blue-600">
               Create an account
             </span>
