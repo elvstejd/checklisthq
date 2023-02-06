@@ -139,7 +139,7 @@ export function Shell({
                   {navigation.map((item) => (
                     <Disclosure.Button
                       key={item.name}
-                      as="a"
+                      as={Link}
                       href={item.href}
                       className={clsx(
                         item.href === activePath
@@ -181,16 +181,17 @@ export function Shell({
                     </button>
                   </div>
                   <div className="mt-3 space-y-1">
-                    {userNavigation.map((item) => (
-                      <Disclosure.Button
-                        key={item.name}
-                        as="a"
-                        href={item.href}
-                        className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                      >
-                        {item.name}
-                      </Disclosure.Button>
-                    ))}
+                    <Disclosure.Button
+                      onClick={() =>
+                        void signOut({
+                          callbackUrl: env.NEXT_PUBLIC_HOST + "/",
+                        })
+                      }
+                      as="a"
+                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                    >
+                      Sign out
+                    </Disclosure.Button>
                   </div>
                 </div>
               </Disclosure.Panel>
@@ -239,12 +240,6 @@ const navigation = [
 ] as const;
 
 type NavPath = (typeof navigation)[number]["href"];
-
-const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
-];
 
 function RedirectToDashboard() {
   const router = useRouter();
