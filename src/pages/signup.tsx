@@ -10,7 +10,7 @@ export default function SignUp() {
     <div className="flex min-h-screen flex-col items-center justify-center">
       <div className="mb-10 w-full max-w-2xl rounded-md p-4 py-6 md:border md:shadow-md">
         <h1 className="mb-14 text-center text-2xl font-semibold">
-          Create Your RepeatList Account
+          Create Your Omilist Account
         </h1>
         <div className="mx-auto flex max-w-xs flex-col gap-2">
           <Button
