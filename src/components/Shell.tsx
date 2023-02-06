@@ -1,11 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import clsx from "clsx";
+import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { ArrowLeft, Bell, List, X } from "phosphor-react";
-import React, { Fragment } from "react";
+import { useRouter } from "next/router";
+import { ArrowLeft, Bell, List, SignOut, Spinner, X } from "phosphor-react";
+import React, { Fragment, useEffect } from "react";
 import { Brand } from "../components/Brand";
+import { env } from "../env/client.mjs";
 
 interface ShellProps {
   pageTitle: string;
@@ -22,6 +25,11 @@ export function Shell({
   activePath,
   backTo,
 }: ShellProps) {
+  const { status } = useSession();
+
+  if (status === "loading") return <LoadingScreen />;
+  if (status === "unauthenticated") return <RedirectToDashboard />;
+
   return (
     <>
       <Head>
@@ -89,21 +97,24 @@ export function Shell({
                         leaveTo="transform opacity-0 scale-95"
                       >
                         <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                          {userNavigation.map((item) => (
-                            <Menu.Item key={item.name}>
-                              {({ active }) => (
-                                <a
-                                  href={item.href}
-                                  className={clsx(
-                                    active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-sm text-gray-700"
-                                  )}
-                                >
-                                  {item.name}
-                                </a>
-                              )}
-                            </Menu.Item>
-                          ))}
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                className={clsx(
+                                  active ? "bg-gray-100" : "",
+                                  "flex w-full items-center gap-3 px-4 py-2 text-sm text-gray-700"
+                                )}
+                                onClick={() =>
+                                  void signOut({
+                                    callbackUrl: env.NEXT_PUBLIC_HOST + "/",
+                                  })
+                                }
+                              >
+                                <SignOut size={18} />
+                                <span>Sign out</span>
+                              </button>
+                            )}
+                          </Menu.Item>
                         </Menu.Items>
                       </Transition>
                     </Menu>
@@ -233,3 +244,21 @@ const userNavigation = [
   { name: "Settings", href: "#" },
   { name: "Sign out", href: "#" },
 ];
+
+function RedirectToDashboard() {
+  const router = useRouter();
+
+  useEffect(() => {
+    void router.push("/");
+  }, [router]);
+
+  return <LoadingScreen />;
+}
+
+function LoadingScreen() {
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <Spinner size={28} className="animate-spin" />
+    </div>
+  );
+}
