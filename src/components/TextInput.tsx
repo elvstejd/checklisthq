@@ -1,15 +1,27 @@
 import clsx from "clsx";
 import type { InputHTMLAttributes } from "react";
+import { useEffect, useRef } from "react";
 import { forwardRef } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   helpText?: string;
   error?: string;
+  autoFocus?: boolean;
 }
 
 export const TextInput = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, helpText, placeholder, error, ...rest }, ref) => {
+  ({ label, helpText, placeholder, error, autoFocus, ...rest }, forwardRef) => {
+    const myRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+      const node = myRef.current;
+
+      if (node) {
+        node.focus();
+      }
+    }, []);
+
     return (
       <div>
         {label && (
@@ -22,9 +34,17 @@ export const TextInput = forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="mt-1">
           <input
-            ref={ref}
+            ref={(node) => {
+              myRef.current = node;
+              if (typeof forwardRef === "function") {
+                forwardRef(node);
+              } else if (forwardRef) {
+                forwardRef.current = node;
+              }
+            }}
             type="text"
             id={label}
+            autoFocus={autoFocus}
             className={clsx(
               "block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
               {
