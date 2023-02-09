@@ -18,12 +18,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
-      <div className={`${inter.variable} font-sans`}>
+    <>
+      <style jsx global>{`
+        html {
+          font-family: ${inter.style.fontFamily};
+        }
+      `}</style>
+      <SessionProvider session={session}>
         <Component {...pageProps} />
         <Toaster position="bottom-center" />
-      </div>
-    </SessionProvider>
+      </SessionProvider>
+    </>
   );
 };
 
