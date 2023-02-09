@@ -11,6 +11,7 @@ interface DialogModalProps {
   description: string;
   type?: "default" | "danger" | "warning";
   target?: JSX.Element;
+  confirmLabel?: string;
 }
 
 export function DialogModal({
@@ -18,6 +19,7 @@ export function DialogModal({
   description,
   type,
   target,
+  confirmLabel,
   onConfirm,
   onCancel,
 }: DialogModalProps) {
@@ -130,7 +132,7 @@ export function DialogModal({
                       onConfirm?.();
                     }}
                   >
-                    Deactivate
+                    {confirmLabel ? confirmLabel : "Confirm"}
                   </Button>
                 </div>
               </div>

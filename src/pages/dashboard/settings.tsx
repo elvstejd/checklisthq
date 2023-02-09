@@ -13,6 +13,7 @@ export default function Settings() {
           type="danger"
           target={<Button color="danger">Delete my account</Button>}
           onConfirm={() => console.log("confirmed. deleting...")}
+          confirmLabel="Yes, delete forever."
         />
       </div>
     </Shell>
