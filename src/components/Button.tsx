@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import type { Ref } from "react";
 
 interface ButtonProps {
   children: string | JSX.Element;
@@ -8,7 +9,8 @@ interface ButtonProps {
   noBorder?: boolean;
   type?: "submit" | "button" | "reset";
   onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  color?: "danger" | "normal";
+  color?: "danger" | "default" | "warning";
+  innerRef?: Ref<HTMLButtonElement>;
 }
 
 export default function Button({
@@ -20,10 +22,11 @@ export default function Button({
   loading,
   type,
   color,
+  innerRef,
 }: ButtonProps) {
   return (
     <button
-      {...{ onClick, type }}
+      {...{ onClick, type, ref: innerRef }}
       disabled={loading}
       className={clsx(
         "rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-400",
@@ -43,6 +46,10 @@ export default function Button({
         {
           "bg-red-600 hover:bg-red-700 active:bg-red-800":
             (!variant || variant === "default") && color === "danger",
+        },
+        {
+          "bg-yellow-300 text-yellow-900 hover:bg-yellow-400 active:bg-yellow-500":
+            (!variant || variant === "default") && color === "warning",
         }
       )}
     >
