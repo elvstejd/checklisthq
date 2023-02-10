@@ -96,6 +96,23 @@ export const checklistRouter = createTRPCRouter({
       });
       return { id: result.id };
     }),
+  update: protectedProcedure
+    .input(
+      z.object({ id: z.string().length(7), newChecklist: checklistSchema })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const id = input.id;
+
+      const result = await ctx.prisma.checklist.update({
+        where: { id },
+        data: {
+          schema: JSON.stringify(input.newChecklist),
+          title: input.newChecklist.title,
+        },
+      });
+
+      return { id: result.id };
+    }),
   getById: publicProcedure
     .input(z.object({ id: z.string() }))
     .output(checklistSchema)
@@ -106,6 +123,8 @@ export const checklistRouter = createTRPCRouter({
       });
 
       if (checklist) {
+        console.log(checklist.schema);
+
         return JSON.parse(checklist.schema as string) as z.TypeOf<
           typeof checklistSchema
         >;
