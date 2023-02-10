@@ -8,6 +8,8 @@ interface SpanInputProps {
   onChange: (value: string) => void;
   autoFocus?: boolean;
   error?: string;
+  onRender?: () => void;
+  defaultValue?: string;
 }
 
 export function SpanInput({
@@ -17,6 +19,8 @@ export function SpanInput({
   onChange,
   autoFocus,
   error,
+  defaultValue,
+  onRender,
 }: SpanInputProps) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLSpanElement>(null);
@@ -26,10 +30,13 @@ export function SpanInput({
   }, [onChange, value]);
 
   useEffect(() => {
-    if (inputRef.current && autoFocus) {
-      inputRef.current.focus();
-    }
-  }, [autoFocus]);
+    if (!inputRef.current) return;
+
+    if (autoFocus) inputRef.current.focus();
+    if (defaultValue) inputRef.current.innerHTML = defaultValue;
+    onRender?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -62,6 +69,7 @@ export function SpanInput({
               setValue(inputRef.current.textContent);
           }
         }}
+        defaultValue={defaultValue}
         contentEditable
         suppressContentEditableWarning
         onInput={(e) => setValue(e.currentTarget.textContent as string)}

@@ -9,6 +9,8 @@ import type {
   UseFormUnregister,
   FieldErrorsImpl,
   UseFormReset,
+  DefaultValues,
+  UseFormSetValue,
 } from "react-hook-form";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { SpanInput } from "../components/SpanInput";
@@ -38,11 +40,12 @@ export function ChecklistForm({
     resetField,
     clearErrors,
     reset,
-    formState: { errors },
+    setValue,
+    formState: { errors, defaultValues },
   } = useForm<ChecklistSchema>({
     defaultValues: providedDefaultValues
       ? providedDefaultValues
-      : defaultValues,
+      : localDefaultValues,
     resolver: zodResolver(checklistSchema),
   });
 
@@ -56,10 +59,6 @@ export function ChecklistForm({
     shouldUnregister: true,
   });
   const { enableMultipleSections } = useSettingsStore();
-
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
 
   return (
     <div>
@@ -77,7 +76,11 @@ export function ChecklistForm({
                 placeholder="Your Awesome Title Here"
                 uniqueClass="checklist-title"
                 onChange={onChange}
-                autoFocus
+                onRender={() => {
+                  if (!defaultValues?.title) return;
+                  setValue("title", defaultValues?.title);
+                }}
+                defaultValue={defaultValues?.title}
               />
             )}
           />
@@ -107,6 +110,9 @@ export function ChecklistForm({
                         onChange={onChange}
                         autoFocus={sectionIndex !== 0}
                         error={errors.sections?.[sectionIndex]?.title?.message}
+                        defaultValue={
+                          defaultValues?.sections?.[sectionIndex]?.title
+                        }
                       />
                     )}
                   />
@@ -128,6 +134,8 @@ export function ChecklistForm({
                     resetField,
                     clearErrors,
                     reset,
+                    defaultValues,
+                    setValue,
                   }}
                 />
               </div>
@@ -165,6 +173,8 @@ function TasksInputArray({
   watch,
   errors,
   reset,
+  defaultValues,
+  setValue,
 }: {
   sectionIndex: number;
   control: Control<ChecklistSchema>;
@@ -174,6 +184,8 @@ function TasksInputArray({
   watch: UseFormWatch<ChecklistSchema>;
   errors: Partial<FieldErrorsImpl<ChecklistSchema>>;
   reset: UseFormReset<ChecklistSchema>;
+  defaultValues?: Readonly<DefaultValues<ChecklistSchema>>;
+  setValue?: UseFormSetValue<ChecklistSchema>;
 }) {
   const {
     fields: tasks,
@@ -200,6 +212,8 @@ function TasksInputArray({
             control,
             errors,
             reset,
+            defaultValues,
+            setValue,
           }}
         />
       ))}
@@ -235,6 +249,8 @@ function TaskInput({
   watch,
   control,
   errors,
+  defaultValues,
+  setValue,
 }: {
   sectionIndex: number;
   taskIndex: number;
@@ -245,6 +261,8 @@ function TaskInput({
   watch: UseFormWatch<ChecklistSchema>;
   control: Control<ChecklistSchema>;
   errors: Partial<FieldErrorsImpl<ChecklistSchema>>;
+  defaultValues?: Readonly<DefaultValues<ChecklistSchema>>;
+  setValue?: UseFormSetValue<ChecklistSchema>;
 }) {
   const [showDesc, setShowDesc] = useState(false);
   const watchSections = watch("sections");
@@ -256,6 +274,20 @@ function TaskInput({
       register(`sections.${sectionIndex}.tasks.${taskIndex}.description`);
     }
   }, [register, sectionIndex, showDesc, taskIndex, unregister]);
+
+  useEffect(() => {
+    const defaultDescription =
+      defaultValues?.sections?.[sectionIndex]?.tasks?.[taskIndex]?.description;
+
+    if (defaultDescription) {
+      setShowDesc(true);
+      setValue?.(
+        `sections.${sectionIndex}.tasks.${taskIndex}.description`,
+        defaultDescription
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div
@@ -279,13 +311,16 @@ function TaskInput({
                 errors.sections?.[sectionIndex]?.tasks?.[taskIndex]?.title
                   ?.message
               }
+              defaultValue={
+                defaultValues?.sections?.[sectionIndex]?.tasks?.[taskIndex]
+                  ?.title
+              }
             />
           )}
         />
         <p className="mt-1 text-sm text-red-600">
           {errors.sections?.[sectionIndex]?.tasks?.[taskIndex]?.title?.message}
         </p>
-
         {showDesc && (
           <>
             <textarea
@@ -344,7 +379,7 @@ function TaskInput({
   );
 }
 
-const defaultValues = {
+const localDefaultValues = {
   title: "",
   sections: [
     {
