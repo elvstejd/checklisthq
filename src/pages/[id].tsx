@@ -9,7 +9,7 @@ import { Brand } from "../components/Brand";
 import { Footer } from "../components/Footer";
 import clsx from "clsx";
 
-const Home: NextPage = () => {
+const ChecklistView: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const [checklist, setChecklist] = useState<
@@ -84,7 +84,7 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default ChecklistView;
 
 function LoadingSkeleton() {
   return (
