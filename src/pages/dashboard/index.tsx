@@ -38,9 +38,11 @@ function Card({ title, id }: { title: string; id: string }) {
         {title}
       </p>
       <div className="ml-4 flex gap-2 border-l pl-4">
-        <Button variant="outline" square>
-          <Pencil size={18} />
-        </Button>
+        <Link href={`/dashboard/edit/${id}`}>
+          <Button variant="outline" square>
+            <Pencil size={18} />
+          </Button>
+        </Link>
         <Link href={`/${id}`} target="_blank">
           <Button variant="outline" square>
             <Eye size={18} />
