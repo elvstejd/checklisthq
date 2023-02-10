@@ -1,10 +1,54 @@
 import React from "react";
+import type { ChecklistSchema } from "../../components/ChecklistForm";
 import { ChecklistForm } from "../../components/ChecklistForm";
 import { Shell } from "../../components/Shell";
 import { useSettingsStore } from "../../stores";
 import { Toggle } from "../../components/Toggle";
+import type { SubmitHandler } from "react-hook-form";
+import { api } from "../../utils/api";
+import { notify } from "../../utils/notifications";
+import { useRouter } from "next/router";
 
 export default function New() {
+  const { enableMultipleSections } = useSettingsStore();
+  const { mutate, isLoading } = api.checklist.create.useMutation();
+  const router = useRouter();
+
+  const onSubmit: SubmitHandler<ChecklistSchema> = (data) => {
+    const cleanData = {
+      ...data,
+      sections: data.sections.map((section) => {
+        const newSection = {
+          tasks: section.tasks.map((task) => {
+            const newTask = { title: task.title };
+            if (task.description) {
+              return task;
+            }
+            return newTask;
+          }),
+        };
+
+        if (section.title && enableMultipleSections) {
+          return { ...newSection, title: section.title };
+        }
+
+        return newSection;
+      }),
+    };
+
+    mutate(cleanData, {
+      onSuccess: (data) => {
+        notify.success("Checklist created succesfully!");
+        void router.push(`/${data.id}`);
+      },
+      onError: () => {
+        notify.error(
+          "An unexpected error happened. If you believe this should not be happening please contact us."
+        );
+      },
+    });
+  };
+
   return (
     <Shell
       pageTitle="New checklist"
@@ -13,7 +57,10 @@ export default function New() {
     >
       <div className="flex flex-col md:grid md:grid-cols-12 md:gap-4">
         <div className=" md:col-span-8 lg:col-span-9">
-          <ChecklistForm />
+          <ChecklistForm
+            onSuccesfulSubmit={onSubmit}
+            submitIsLoading={isLoading}
+          />
         </div>
         <div className="md:col-span-4 lg:col-span-3">
           <Settings />
