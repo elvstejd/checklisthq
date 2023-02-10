@@ -15,13 +15,20 @@ import { SpanInput } from "../components/SpanInput";
 import { Article, Plus, X } from "phosphor-react";
 import Button from "../components/Button";
 import { useSettingsStore } from "../stores";
-import { api } from "../utils/api";
-import { useRouter } from "next/router";
 import { z } from "zod";
-import { notify } from "../utils/notifications";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-export function ChecklistForm() {
+interface ChecklistFormProps {
+  onSuccesfulSubmit: SubmitHandler<ChecklistSchema>;
+  defaultValues?: ChecklistSchema;
+  submitIsLoading: boolean;
+}
+
+export function ChecklistForm({
+  onSuccesfulSubmit,
+  defaultValues: providedDefaultValues,
+  submitIsLoading,
+}: ChecklistFormProps) {
   const {
     register,
     unregister,
@@ -33,7 +40,9 @@ export function ChecklistForm() {
     reset,
     formState: { errors },
   } = useForm<ChecklistSchema>({
-    defaultValues,
+    defaultValues: providedDefaultValues
+      ? providedDefaultValues
+      : defaultValues,
     resolver: zodResolver(checklistSchema),
   });
 
@@ -46,48 +55,7 @@ export function ChecklistForm() {
     name: "sections",
     shouldUnregister: true,
   });
-
-  const router = useRouter();
-
   const { enableMultipleSections } = useSettingsStore();
-
-  const { mutate: createMutation, isLoading } =
-    api.checklist.create.useMutation();
-
-  const onSubmit: SubmitHandler<ChecklistSchema> = (data) => {
-    const cleanData = {
-      ...data,
-      sections: data.sections.map((section) => {
-        const newSection = {
-          tasks: section.tasks.map((task) => {
-            const newTask = { title: task.title };
-            if (task.description) {
-              return task;
-            }
-            return newTask;
-          }),
-        };
-
-        if (section.title && enableMultipleSections) {
-          return { ...newSection, title: section.title };
-        }
-
-        return newSection;
-      }),
-    };
-
-    createMutation(cleanData, {
-      onSuccess: (data) => {
-        notify.success("Checklist created succesfully!");
-        void router.push(`/${data.id}`);
-      },
-      onError: () => {
-        notify.error(
-          "An unexpected error happened. If you believe this should not be happening please contact us."
-        );
-      },
-    });
-  };
 
   useEffect(() => {
     console.log(errors);
@@ -95,7 +63,9 @@ export function ChecklistForm() {
 
   return (
     <div>
-      <form onSubmit={(...args) => void handleSubmit(onSubmit)(...args)}>
+      <form
+        onSubmit={(...args) => void handleSubmit(onSuccesfulSubmit)(...args)}
+      >
         <div className="relative mt-3 mb-4 flex flex-col items-center">
           <Controller
             control={control}
@@ -177,7 +147,7 @@ export function ChecklistForm() {
           </button>
         )}
         <div className="flex justify-center">
-          <Button loading={isLoading} type="submit">
+          <Button loading={submitIsLoading} type="submit">
             Publish
           </Button>
         </div>
@@ -423,4 +393,4 @@ const checklistSchema = z.object({
     .max(10),
 });
 
-type ChecklistSchema = z.infer<typeof checklistSchema>;
+export type ChecklistSchema = z.infer<typeof checklistSchema>;
