@@ -16,7 +16,7 @@ import { notify } from "../../../utils/notifications";
 const Edit: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { enableMultipleSections } = useSettingsStore();
+  const { enableMultipleSections, toggleMultipleSections } = useSettingsStore();
   const [checklist, setChecklist] = useState<
     RouterOutputs["checklist"]["getById"] | undefined
   >();
@@ -33,6 +33,13 @@ const Edit: NextPage = () => {
     const checklist = await client.checklist.getById.query({
       id: id as string,
     });
+
+    if (checklist.sections[0]?.title) {
+      toggleMultipleSections(true);
+    } else {
+      toggleMultipleSections(false);
+    }
+
     setChecklist(checklist);
   }
 
