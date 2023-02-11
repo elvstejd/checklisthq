@@ -14,7 +14,6 @@ import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { SpanInput } from "../components/SpanInput";
 import { Article, Plus, X } from "phosphor-react";
 import Button from "../components/Button";
-import { useSettingsStore } from "../stores";
 import { api } from "../utils/api";
 import { useRouter } from "next/router";
 import { z } from "zod";
@@ -37,19 +36,13 @@ export function FreeChecklistForm() {
     resolver: zodResolver(freeChecklistSchema),
   });
 
-  const {
-    fields: sections,
-    append,
-    remove,
-  } = useFieldArray({
+  const { fields: sections, remove } = useFieldArray({
     control,
     name: "sections",
     shouldUnregister: true,
   });
 
   const router = useRouter();
-
-  const { enableMultipleSections } = useSettingsStore();
 
   const { mutate: createMutation, isLoading } =
     api.checklist.create.useMutation();
@@ -142,13 +135,6 @@ export function FreeChecklistForm() {
             </p>
           </div>
         ))}
-        {enableMultipleSections && (
-          <button
-            onClick={() => append({ tasks: [{ description: "", title: "" }] })}
-          >
-            Add another section...
-          </button>
-        )}
         <div className="flex justify-center">
           <Button loading={isLoading} type="submit">
             Publish
