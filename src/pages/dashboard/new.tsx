@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { ChecklistSchema } from "../../components/ChecklistForm";
 import { ChecklistForm } from "../../components/ChecklistForm";
 import { Shell } from "../../components/Shell";
@@ -10,9 +10,14 @@ import { notify } from "../../utils/notifications";
 import { useRouter } from "next/router";
 
 export default function New() {
-  const { enableMultipleSections } = useSettingsStore();
+  const { enableMultipleSections, toggleMultipleSections } = useSettingsStore();
   const { mutate, isLoading } = api.checklist.create.useMutation();
   const router = useRouter();
+
+  useEffect(() => {
+    toggleMultipleSections(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSubmit: SubmitHandler<ChecklistSchema> = (data) => {
     const cleanData = {
