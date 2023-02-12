@@ -1,8 +1,8 @@
 import { nanoid } from "../../nanoid";
 import { z } from "zod";
-
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { Prisma } from "@prisma/client";
 
 const freeChecklistSchema = z.object({
   title: z
@@ -115,25 +115,27 @@ export const checklistRouter = createTRPCRouter({
     }),
   getById: publicProcedure
     .input(z.object({ id: z.string() }))
-    .output(checklistSchema)
+    .output(checklistSchema.optional())
     .query(async ({ ctx, input }) => {
-      const checklist = await ctx.prisma.checklist.findUniqueOrThrow({
-        where: { id: input.id },
-        include: { user: { select: { username: true } } },
-      });
-
-      if (checklist) {
-        console.log(checklist.schema);
+      try {
+        const checklist = await ctx.prisma.checklist.findUniqueOrThrow({
+          where: { id: input.id },
+          include: { user: { select: { username: true } } },
+        });
 
         return JSON.parse(checklist.schema as string) as z.TypeOf<
           typeof checklistSchema
         >;
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+          if (e.code === "P2025") {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "404 Checklist Not Found",
+            });
+          }
+        }
       }
-
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "An unexpected error occurred, please try again later.",
-      });
     }),
 
   getAll: protectedProcedure.query(({ ctx }) => {

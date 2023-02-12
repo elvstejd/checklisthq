@@ -8,13 +8,17 @@ import { useEffect, useState } from "react";
 import { Brand } from "../components/Brand";
 import { Footer } from "../components/Footer";
 import clsx from "clsx";
+import { TRPCClientError } from "@trpc/client";
+import { SmileyXEyes } from "phosphor-react";
+import Button from "../components/Button";
+import Link from "next/link";
 
 const ChecklistView: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [checklist, setChecklist] = useState<
-    RouterOutputs["checklist"]["getById"] | undefined
-  >();
+  const [checklist, setChecklist] =
+    useState<RouterOutputs["checklist"]["getById"]>();
+  const [error, setError] = useState<string>();
 
   useEffect(() => {
     if (router.isReady) {
@@ -24,10 +28,16 @@ const ChecklistView: NextPage = () => {
   }, [router.isReady]);
 
   async function getChecklistData() {
-    const checklist = await client.checklist.getById.query({
-      id: id as string,
-    });
-    setChecklist(checklist);
+    try {
+      const checklist = await client.checklist.getById.query({
+        id: id as string,
+      });
+      setChecklist(checklist);
+    } catch (e) {
+      if (e instanceof TRPCClientError) {
+        setError(e.message);
+      } else throw e;
+    }
   }
 
   return (
@@ -45,7 +55,8 @@ const ChecklistView: NextPage = () => {
         </header>
         <main className="flex-grow">
           <div className="mx-auto max-w-2xl px-4">
-            {!checklist && <LoadingSkeleton />}
+            {error && <ErrorFrame message={error} />}
+            {!checklist && !error && <LoadingSkeleton />}
             <h1 className="bold mb-4 text-center text-2xl font-bold">
               {checklist?.title}
             </h1>
@@ -112,6 +123,18 @@ function LoadingSkeleton() {
       </div>
 
       <span className="sr-only">Loading...</span>
+    </div>
+  );
+}
+
+function ErrorFrame({ message }: { message: string }) {
+  return (
+    <div className="mt-12 flex flex-col items-center">
+      <SmileyXEyes size={128} weight="fill" className="mx-auto text-gray-300" />
+      <p className="mb-4 text-center text-lg">{message}</p>
+      <Link href="/new">
+        <Button variant="outline">Create my own checklist instead</Button>
+      </Link>
     </div>
   );
 }
