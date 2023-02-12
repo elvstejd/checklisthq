@@ -33,7 +33,7 @@ export function Shell({
   return (
     <>
       <Head>
-        <title>{pageTitle} | Omilist</title>
+        <title>{pageTitle} | ChecklistHQ</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="min-h-full">

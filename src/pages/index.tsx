@@ -18,7 +18,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>RepeatList: Reusable Checklist Templates</title>
+        <title>ChecklistHQ | Create and Share Checklist Templates</title>
         <meta
           name="description"
           content="Make lightning strike twice with checklist templates"

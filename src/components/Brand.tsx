@@ -21,7 +21,7 @@ export function Brand({ hideName }: BrandProps) {
         </div>
         <div className={clsx(hideName && "hidden")}>
           <div className={"hidden font-semibold text-gray-700 md:block"}>
-            Omilist
+            ChecklistHQ
           </div>
         </div>
       </div>

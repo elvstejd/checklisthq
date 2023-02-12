@@ -20,7 +20,7 @@ export function Footer({ showReportBtn }: FooterProps) {
               <Link href="/privacy">Privacy</Link>
             </li>
           </ul>
-          <p className="text-sm md:order-1">© 2023 RepeatList</p>
+          <p className="text-sm md:order-1">© 2023 ChecklistHQ</p>
         </div>
       </div>
     </footer>

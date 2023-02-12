@@ -33,7 +33,7 @@ const ChecklistView: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{checklist?.title ?? "Loading..."} | Omilist</title>
+        <title>{checklist?.title ?? "Loading..."} | ChecklistHQ</title>
         <meta name="description" content="Check out this checklist!" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
