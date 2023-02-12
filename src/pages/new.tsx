@@ -14,7 +14,7 @@ export default function New() {
       <main>
         <div className="mx-auto max-w-2xl px-4">
           <div className="my-4 flex items-center justify-center">
-            <Brand hideName={true} />
+            <Brand />
           </div>
           <FreeChecklistForm />
         </div>
