@@ -34,7 +34,7 @@ const Edit: NextPage = () => {
       id: id as string,
     });
 
-    if (checklist.sections[0]?.title) {
+    if (checklist?.sections[0]?.title) {
       toggleMultipleSections(true);
     } else {
       toggleMultipleSections(false);
