@@ -128,17 +128,10 @@ const useCases = [
     color: "blue",
   },
   {
-    icon: HouseLine,
-    title: "Home Maintenance",
-    description:
-      "Schedule and track home maintenance tasks, such as cleaning and yard work.",
-    color: "purple",
-  },
-  {
     icon: GraduationCap,
     title: "Education & Learning",
     description:
-      "Create checklists as guides students and learners can follow.",
+      "Create checklists as guides that students and learners can follow.",
     color: "yellow",
   },
   {
@@ -147,5 +140,12 @@ const useCases = [
     description:
       "Create checklists for the routines you follow to stay healthy.",
     color: "pink",
+  },
+  {
+    icon: HouseLine,
+    title: "Home Maintenance",
+    description:
+      "Schedule and track home maintenance tasks, such as cleaning and yard work.",
+    color: "purple",
   },
 ];
