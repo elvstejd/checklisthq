@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import { Brand } from "../components/Brand";
 import { FreeChecklistForm } from "../components/FreeChecklistForm";
 
@@ -16,6 +17,17 @@ export default function New() {
             <Brand hideName={true} />
           </div>
           <FreeChecklistForm />
+        </div>
+        <div className="mx-auto mt-10 max-w-sm text-center text-sm text-gray-400">
+          <span className="font-bold">IMPORTANT: </span>
+          <span>
+            We can&#39;t promise that this checklist wil be available after 24
+            hours. If you need your checklist to last indefinitely, please{" "}
+          </span>
+          <Link href="/signup" className="underline">
+            <span>create an account</span>
+          </Link>
+          <span>.*</span>
         </div>
       </main>
     </>
