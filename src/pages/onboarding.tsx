@@ -61,7 +61,7 @@ export default function Onboarding() {
   return (
     <>
       <Head>
-        <title>Welcome to Omilist!</title>
+        <title>Welcome to ChecklistHQ!</title>
       </Head>
       <div className="flex min-h-screen flex-col items-center justify-center">
         <div className="mb-10 w-full max-w-2xl rounded-md p-4 py-6 transition-all md:border md:shadow-md">

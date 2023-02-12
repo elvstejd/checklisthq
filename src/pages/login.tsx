@@ -1,4 +1,5 @@
 import { signIn } from "next-auth/react";
+import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 import Button from "../components/Button";
@@ -6,42 +7,47 @@ import { env } from "../env/client.mjs";
 
 export default function Login() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <div className="mb-10 w-full max-w-2xl rounded-md p-4 py-6 md:border md:shadow-md">
-        <h1 className="mb-6 text-center text-2xl font-semibold">
-          Welcome back!
-        </h1>
-        <div className="mx-auto flex max-w-xs flex-col gap-2">
-          <Button
-            variant="outline"
-            onClick={() =>
-              void signIn("google", {
-                callbackUrl: env.NEXT_PUBLIC_HOST + "/auth",
-              })
-            }
-          >
-            <div className="flex items-center">
-              {googleIcon}
-              Continue with Google
-            </div>
-          </Button>
-          {/* <Button variant="outline">
+    <>
+      <Head>
+        <title>Login | ChecklistHQ</title>
+      </Head>
+      <div className="flex min-h-screen flex-col items-center justify-center">
+        <div className="mb-10 w-full max-w-2xl rounded-md p-4 py-6 md:border md:shadow-md">
+          <h1 className="mb-6 text-center text-2xl font-semibold">
+            Welcome back!
+          </h1>
+          <div className="mx-auto flex max-w-xs flex-col gap-2">
+            <Button
+              variant="outline"
+              onClick={() =>
+                void signIn("google", {
+                  callbackUrl: env.NEXT_PUBLIC_HOST + "/auth",
+                })
+              }
+            >
+              <div className="flex items-center">
+                {googleIcon}
+                Continue with Google
+              </div>
+            </Button>
+            {/* <Button variant="outline">
         <div className="flex items-center">
-          <EnvelopeSimple size={25} className="mr-3" />
-          Continue with Email
+        <EnvelopeSimple size={25} className="mr-3" />
+        Continue with Email
         </div>
       </Button> */}
-        </div>
-        <div className="mt-8 text-center text-sm">
-          <span>No account yet?</span>
-          <Link href="/signup">
-            <span className="ml-2 font-bold text-blue-600">
-              Create an account
-            </span>
-          </Link>
+          </div>
+          <div className="mt-8 text-center text-sm">
+            <span>No account yet?</span>
+            <Link href="/signup">
+              <span className="ml-2 font-bold text-blue-600">
+                Create an account
+              </span>
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
