@@ -10,7 +10,7 @@ export default function SignUp() {
     <div className="flex min-h-screen flex-col items-center justify-center">
       <div className="mb-10 w-full max-w-2xl rounded-md p-4 py-6 md:border md:shadow-md">
         <h1 className="mb-14 text-center text-2xl font-semibold">
-          Create Your Omilist Account
+          Join ChecklistHQ!
         </h1>
         <div className="mx-auto flex max-w-xs flex-col gap-2">
           <Button
@@ -39,15 +39,14 @@ export default function SignUp() {
             <span className="ml-2 font-bold text-blue-600">Log In instead</span>
           </Link>
         </div>
-        <div className="mt-8 text-center text-sm text-gray-400">
+        <div className="mt-8 hidden text-center text-sm text-gray-400">
           <span>
-            By completing this registration process, you agree to RepeatList’s{" "}
+            By completing this registration process, you agree to ChecklistHQ’s{" "}
           </span>
           <Link href="/terms">
             <span className="underline">Terms of Service</span>
           </Link>
-          <span> and acknowledge that </span>
-          <span>RepeatList’s </span>
+          <span> and acknowledge that ChecklistHQ’s </span>
           <Link href="/privacy">
             <span className="underline">Privacy Policy</span>
           </Link>
