@@ -98,16 +98,16 @@ const dashboardButton = (
 );
 
 const navLinks = [
-  {
-    label: "Pricing",
-    path: "/pricing",
-  },
+  // {
+  //   label: "Pricing",
+  //   path: "/pricing",
+  // },
   {
     label: "Use cases",
     path: "#use-cases",
   },
-  {
-    label: "Features",
-    path: "#features",
-  },
+  // {
+  //   label: "Features",
+  //   path: "#features",
+  // },
 ];

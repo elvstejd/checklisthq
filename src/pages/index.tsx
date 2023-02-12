@@ -68,7 +68,10 @@ const Home: NextPage = () => {
         </section>
         <section>
           <div className="mx-auto max-w-6xl px-4">
-            <h2 className="mt-32 mb-12 text-center text-3xl font-semibold">
+            <h2
+              id="use-cases"
+              className="mt-32 mb-12 text-center text-3xl font-semibold"
+            >
               Use cases
             </h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
