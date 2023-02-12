@@ -12,7 +12,7 @@ export function Footer({ showReportBtn }: FooterProps) {
           {showReportBtn && (
             <button className="hidden text-sm md:order-2">Report</button>
           )}
-          <ul className="flex gap-4 text-sm md:order-3">
+          <ul className="hidden gap-4 text-sm md:order-3">
             <li>
               <Link href="/terms">Terms</Link>
             </li>
