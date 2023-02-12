@@ -9,7 +9,7 @@ interface BrandProps {
 export function Brand({ hideName }: BrandProps) {
   return (
     <Link href={"/"}>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center md:gap-3">
         <div className="relative aspect-square h-8">
           <Image
             src="/logo.png"
