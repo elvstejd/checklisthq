@@ -45,7 +45,7 @@ export function FreeChecklistForm() {
   const router = useRouter();
 
   const { mutate: createMutation, isLoading } =
-    api.checklist.create.useMutation();
+    api.checklist.freeCreate.useMutation();
 
   const onSubmit: SubmitHandler<ChecklistSchema> = (data) => {
     const cleanData = {
