@@ -9,9 +9,10 @@ import { Brand } from "../components/Brand";
 import { Footer } from "../components/Footer";
 import clsx from "clsx";
 import { TRPCClientError } from "@trpc/client";
-import { SmileyXEyes } from "phosphor-react";
+import { PaperPlaneTilt, SmileyXEyes } from "phosphor-react";
 import Button from "../components/Button";
 import Link from "next/link";
+import { DialogModal } from "../components/DialogModal";
 
 const ChecklistView: NextPage = () => {
   const router = useRouter();
@@ -85,6 +86,21 @@ const ChecklistView: NextPage = () => {
                 </div>
               </div>
             ))}
+            <div className="flex justify-center">
+              <DialogModal
+                title="Share your checklist!"
+                description="fds"
+                target={
+                  <Button
+                    variant="text"
+                    square
+                    icon={<PaperPlaneTilt size={18} />}
+                  >
+                    Share
+                  </Button>
+                }
+              />
+            </div>
           </div>
         </main>
         <div className="">
