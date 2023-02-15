@@ -11,6 +11,7 @@ interface ButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   color?: "danger" | "default" | "warning";
   innerRef?: Ref<HTMLButtonElement>;
+  icon?: JSX.Element;
 }
 
 export default function Button({
@@ -23,6 +24,7 @@ export default function Button({
   type,
   color,
   innerRef,
+  icon,
 }: ButtonProps) {
   return (
     <button
@@ -53,7 +55,10 @@ export default function Button({
         }
       )}
     >
-      {loading ? "Loading..." : children}
+      <div className="flex items-center gap-2">
+        {icon && <span>{icon}</span>}
+        <span>{loading ? "Loading..." : children}</span>
+      </div>
     </button>
   );
 }
