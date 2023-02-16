@@ -151,7 +151,7 @@ function SharePanel({ id }: { id: string }) {
           void navigator.clipboard.writeText(env.NEXT_PUBLIC_HOST + "/" + id);
           setLinkCopied(true);
         }}
-        className="flex w-full justify-between rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        className="flex w-full items-center justify-between rounded-md border border-gray-300 py-2 px-3 text-left shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
       >
         <span>
           {env.NEXT_PUBLIC_HOST}/{id}
