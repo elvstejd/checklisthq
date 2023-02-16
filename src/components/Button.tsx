@@ -31,7 +31,7 @@ export default function Button({
       {...{ onClick, type, ref: innerRef }}
       disabled={loading}
       className={clsx(
-        "rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-400",
+        "rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 active:bg-blue-800 disabled:pointer-events-none disabled:opacity-40",
         {
           "border bg-transparent text-gray-800 hover:bg-gray-100  active:bg-gray-200":
             variant === "outline" || variant === "text",
