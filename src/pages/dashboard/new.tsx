@@ -8,6 +8,7 @@ import type { SubmitHandler } from "react-hook-form";
 import { api } from "../../utils/api";
 import { notify } from "../../utils/notifications";
 import { useRouter } from "next/router";
+import { TRPCClientError } from "@trpc/client";
 
 export default function New() {
   const { enableMultipleSections, toggleMultipleSections } = useSettingsStore();
@@ -46,10 +47,13 @@ export default function New() {
         notify.success("Checklist created succesfully!");
         void router.push(`/${data.id}`);
       },
-      onError: () => {
-        notify.error(
-          "An unexpected error happened. If you believe this should not be happening please contact us."
-        );
+      onError: (e) => {
+        if (e instanceof TRPCClientError) {
+          notify.error("Error: " + e.message);
+        } else {
+          console.log(e);
+          throw e;
+        }
       },
     });
   };

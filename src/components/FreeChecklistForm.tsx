@@ -75,6 +75,7 @@ export function FreeChecklistForm() {
         if (e instanceof TRPCClientError) {
           notify.error("Error: " + e.message);
         } else {
+          console.log(e);
           throw e;
         }
       },
