@@ -2,16 +2,18 @@ import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import Button from "./Button";
-import { Info, Skull, Warning } from "phosphor-react";
+// import { Info, Skull, Warning } from "phosphor-react";
 
 interface DialogModalProps {
   onConfirm?: () => void;
   onCancel?: () => void;
   title: string;
-  description: string;
+  description?: string;
   type?: "default" | "danger" | "warning";
   target?: JSX.Element;
   confirmLabel?: string;
+  hideActionButtons?: boolean;
+  children?: JSX.Element | JSX.Element[];
 }
 
 export function DialogModal({
@@ -22,6 +24,8 @@ export function DialogModal({
   confirmLabel,
   onConfirm,
   onCancel,
+  hideActionButtons,
+  children,
 }: DialogModalProps) {
   const [open, setOpen] = useState(false);
 
@@ -67,52 +71,21 @@ export function DialogModal({
             >
               <div className="relative inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle">
                 <div>
-                  <div
-                    className={clsx(
-                      "mx-auto flex h-12 w-12 items-center justify-center rounded-full",
-                      {
-                        "bg-blue-100": type === "default" || !type,
-                        "bg-red-100": type === "danger",
-                        "bg-yellow-100": type === "warning",
-                      }
-                    )}
+                  <Dialog.Title
+                    as="h3"
+                    className="mb-1 text-lg font-medium leading-6 text-gray-900"
                   >
-                    {type === "danger" && (
-                      <Skull
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                        weight="fill"
-                      />
-                    )}
-                    {type === "warning" && (
-                      <Warning
-                        className="h-6 w-6 text-yellow-600"
-                        aria-hidden="true"
-                        weight="fill"
-                      />
-                    )}
-                    {(type === "default" || !type) && (
-                      <Info
-                        className="h-6 w-6 text-blue-600"
-                        aria-hidden="true"
-                        weight="fill"
-                      />
-                    )}
-                  </div>
-
-                  <div className="mt-3 text-center sm:mt-5">
-                    <Dialog.Title
-                      as="h3"
-                      className="mx-auto mb-3 max-w-xs text-lg font-medium leading-6 text-gray-900"
-                    >
-                      {title}
-                    </Dialog.Title>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-500">{description}</p>
-                    </div>
-                  </div>
+                    {title}
+                  </Dialog.Title>
+                  <p className="text-sm text-gray-500">{description}</p>
+                  {children}
                 </div>
-                <div className="mt-4 flex flex-col-reverse gap-3 sm:grid sm:grid-cols-2">
+                <div
+                  className={clsx(
+                    "mt-4 flex-col-reverse gap-3 sm:grid-cols-2",
+                    hideActionButtons === true ? "hidden" : "flex sm:grid"
+                  )}
+                >
                   <Button
                     type="button"
                     onClick={() => {
@@ -143,3 +116,30 @@ export function DialogModal({
     </>
   );
 }
+
+/*
+<div
+  className={clsx(
+    "mx-auto flex h-12 w-12 items-center justify-center rounded-full",
+    {
+      "bg-blue-100": type === "default" || !type,
+      "bg-red-100": type === "danger",
+      "bg-yellow-100": type === "warning",
+    }
+  )}
+>
+  {type === "danger" && (
+    <Skull className="h-6 w-6 text-red-600" aria-hidden="true" weight="fill" />
+  )}
+  {type === "warning" && (
+    <Warning
+      className="h-6 w-6 text-yellow-600"
+      aria-hidden="true"
+      weight="fill"
+    />
+  )}
+  {(type === "default" || !type) && (
+    <Info className="h-6 w-6 text-blue-600" aria-hidden="true" weight="fill" />
+  )}
+</div>;
+*/
