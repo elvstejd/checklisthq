@@ -3,11 +3,12 @@ import clsx from "clsx";
 import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { ArrowLeft, List, SignOut, User, X } from "phosphor-react";
+import Router, { useRouter } from "next/router";
+import { ArrowLeft, List, SignOut, User, UserFocus, X } from "phosphor-react";
 import { Fragment, useEffect } from "react";
 import { Brand } from "../components/Brand";
 import { env } from "../env/client.mjs";
+import { api } from "../utils/api";
 import { LoadingScreen } from "./LoadingScreen";
 
 interface ShellProps {
@@ -26,6 +27,7 @@ export function Shell({
   backTo,
 }: ShellProps) {
   const { status, data } = useSession();
+  const { data: user } = api.user.getMe.useQuery();
 
   if (status === "loading") return <LoadingScreen />;
   if (status === "unauthenticated") return <RedirectToDashboard />;
@@ -85,24 +87,25 @@ export function Shell({
                         leaveTo="transform opacity-0 scale-95"
                       >
                         <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                          <Menu.Item>
-                            {({ active }) => (
-                              <button
-                                className={clsx(
-                                  active ? "bg-gray-100" : "",
-                                  "flex w-full items-center gap-3 px-4 py-2 text-sm text-gray-700"
-                                )}
-                                onClick={() =>
-                                  void signOut({
-                                    callbackUrl: env.NEXT_PUBLIC_HOST + "/",
-                                  })
-                                }
-                              >
-                                <SignOut size={18} />
-                                <span>Sign out</span>
-                              </button>
-                            )}
-                          </Menu.Item>
+                          {userNav.map((nav, index) => (
+                            <Menu.Item key={index}>
+                              {({ active }) => (
+                                <button
+                                  className={clsx(
+                                    active ? "bg-gray-100" : "",
+                                    "flex w-full items-center gap-3 px-4 py-2 text-sm text-gray-700"
+                                  )}
+                                  onClick={() =>
+                                    user?.username &&
+                                    void nav.fn(`/u/${user?.username}`)
+                                  }
+                                >
+                                  {nav.icon && nav.icon}
+                                  <span>{nav.label}</span>
+                                </button>
+                              )}
+                            </Menu.Item>
+                          ))}
                         </Menu.Items>
                       </Transition>
                     </Menu>
@@ -154,17 +157,18 @@ export function Shell({
                     </div>
                   </div>
                   <div className="mt-3 space-y-1">
-                    <Disclosure.Button
-                      onClick={() =>
-                        void signOut({
-                          callbackUrl: env.NEXT_PUBLIC_HOST + "/",
-                        })
-                      }
-                      as="a"
-                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                    >
-                      Sign out
-                    </Disclosure.Button>
+                    {userNav.map((nav, index) => (
+                      <Disclosure.Button
+                        key={index}
+                        onClick={() =>
+                          user?.username && void nav.fn(`/u/${user?.username}`)
+                        }
+                        as="a"
+                        className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                      >
+                        {nav.label}
+                      </Disclosure.Button>
+                    ))}
                   </div>
                 </div>
               </Disclosure.Panel>
@@ -205,6 +209,22 @@ const navigation = [
   { name: "Dashboard", href: "/dashboard" },
   { name: "Settings", href: "/dashboard/settings" },
 ] as const;
+
+const userNav = [
+  {
+    label: "Public profile",
+    icon: <UserFocus size={18} />,
+    fn: (data?: string) => data && Router.push(`${data}`),
+  },
+  {
+    label: "Sign out",
+    icon: <SignOut size={18} />,
+    fn: () =>
+      signOut({
+        callbackUrl: env.NEXT_PUBLIC_HOST + "/",
+      }),
+  },
+];
 
 type NavPath = (typeof navigation)[number]["href"];
 
