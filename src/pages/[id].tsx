@@ -106,7 +106,7 @@ const ChecklistView: NextPage = () => {
             </div>
           </div>
         </main>
-        <div className="">
+        <div>
           <Footer showReportBtn />
         </div>
       </div>
