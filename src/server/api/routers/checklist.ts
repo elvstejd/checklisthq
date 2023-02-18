@@ -130,6 +130,7 @@ export const checklistRouter = createTRPCRouter({
             user: {
               select: { username: true },
             },
+            isPublic: true,
           },
           where: { id: input.id },
         });
