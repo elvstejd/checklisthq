@@ -24,12 +24,14 @@ interface ChecklistFormProps {
   onSuccesfulSubmit: SubmitHandler<ChecklistSchema>;
   defaultValues?: ChecklistSchema;
   submitIsLoading: boolean;
+  submitLabel?: string;
 }
 
 export function ChecklistForm({
   onSuccesfulSubmit,
   defaultValues: providedDefaultValues,
   submitIsLoading,
+  submitLabel,
 }: ChecklistFormProps) {
   const {
     register,
@@ -156,7 +158,7 @@ export function ChecklistForm({
         )}
         <div className="flex justify-center">
           <Button loading={submitIsLoading} type="submit">
-            Publish
+            {submitLabel ? submitLabel : "Publish"}
           </Button>
         </div>
       </form>

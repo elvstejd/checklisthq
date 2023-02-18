@@ -101,6 +101,7 @@ const Edit: NextPage = () => {
               submitIsLoading={isLoading}
               onSuccesfulSubmit={onSubmit}
               defaultValues={checklist.schema}
+              submitLabel="Update"
             />
           ) : (
             <LoadingSkeleton />

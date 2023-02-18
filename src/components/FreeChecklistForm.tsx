@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { z } from "zod";
 import { notify } from "../utils/notifications";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TRPCClientError } from "@trpc/client";
 
 export function FreeChecklistForm() {
   const {
@@ -70,10 +71,13 @@ export function FreeChecklistForm() {
         notify.success("Checklist created succesfully!");
         void router.push(`/${data.id}`);
       },
-      onError: () => {
-        notify.error(
-          "An unexpected error happened. If you believe this should not be happening please contact us."
-        );
+      onError: (e) => {
+        if (e instanceof TRPCClientError) {
+          notify.error("Error: " + e.message);
+        } else {
+          console.log(e);
+          throw e;
+        }
       },
     });
   };
