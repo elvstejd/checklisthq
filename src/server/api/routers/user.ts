@@ -41,7 +41,9 @@ export const userRouter = createTRPCRouter({
               title: true,
               id: true,
             },
-            where: {}, // TODO: only select public checklists
+            where: {
+              isPublic: true,
+            },
           },
         },
       });
