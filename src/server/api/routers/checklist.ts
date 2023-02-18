@@ -88,7 +88,7 @@ export const checklistRouter = createTRPCRouter({
       const id = await nanoid();
       const result = await ctx.prisma.checklist.create({
         data: {
-          schema: JSON.stringify(input),
+          schema: JSON.stringify(input.schema),
           id,
           userId: ctx.session.user.id,
           title: input.schema.title,
@@ -121,12 +121,17 @@ export const checklistRouter = createTRPCRouter({
     }),
   getById: publicProcedure
     .input(z.object({ id: z.string() }))
-    // .output(checklistSchema.optional())
     .query(async ({ ctx, input }) => {
       try {
         const checklist = await ctx.prisma.checklist.findUniqueOrThrow({
+          select: {
+            schema: true,
+            title: true,
+            user: {
+              select: { username: true },
+            },
+          },
           where: { id: input.id },
-          include: { user: { select: { username: true } } },
         });
 
         return {
