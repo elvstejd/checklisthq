@@ -52,7 +52,7 @@ const EmbedChecklistView: NextPage = () => {
       >
         {checklist?.title}
       </h1>
-      {checklist?.sections?.map((section, idx) => (
+      {checklist?.schema.sections?.map((section, idx) => (
         <div
           key={idx}
           className="mb-6 rounded-md border border-solid border-gray-200"

@@ -62,7 +62,7 @@ const ChecklistView: NextPage = () => {
             <h1 className="bold mb-4 text-center text-2xl font-bold">
               {checklist?.title}
             </h1>
-            {checklist?.sections?.map((section, idx) => (
+            {checklist?.schema.sections?.map((section, idx) => (
               <div
                 key={idx}
                 className="mb-6 rounded-md border border-solid border-gray-200"
@@ -106,7 +106,7 @@ const ChecklistView: NextPage = () => {
             </div>
           </div>
         </main>
-        <div className="">
+        <div>
           <Footer showReportBtn />
         </div>
       </div>

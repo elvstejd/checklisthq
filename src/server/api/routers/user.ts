@@ -1,16 +1,18 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+const usernameSchema = z
+  .string()
+  .min(4)
+  .max(32)
+  .regex(/^[a-zA-Z0-9]+$/);
 
 export const userRouter = createTRPCRouter({
   setUsername: protectedProcedure
     .input(
       z.object({
-        username: z
-          .string()
-          .min(4)
-          .max(32)
-          .regex(/^[a-zA-Z0-9]+$/),
+        username: usernameSchema,
       })
     )
     .mutation(async ({ ctx, input: { username } }) => {
@@ -26,4 +28,29 @@ export const userRouter = createTRPCRouter({
       select: { username: true },
     });
   }),
+  getPublicProfile: publicProcedure
+    .input(z.object({ username: usernameSchema }))
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.prisma.user.findUnique({
+        where: { username: input.username },
+        select: {
+          username: true,
+          image: true,
+          Checklists: {
+            select: {
+              title: true,
+              id: true,
+            },
+            where: {
+              isPublic: true,
+            },
+          },
+        },
+      });
+
+      if (!user)
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+
+      return user;
+    }),
 });

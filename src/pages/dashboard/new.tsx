@@ -11,12 +11,18 @@ import { useRouter } from "next/router";
 import { TRPCClientError } from "@trpc/client";
 
 export default function New() {
-  const { enableMultipleSections, toggleMultipleSections } = useSettingsStore();
+  const {
+    enableMultipleSections,
+    toggleMultipleSections,
+    setPublishAsPublic,
+    publishAsPublic,
+  } = useSettingsStore();
   const { mutate, isLoading } = api.checklist.create.useMutation();
   const router = useRouter();
 
   useEffect(() => {
     toggleMultipleSections(false);
+    setPublishAsPublic(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -42,20 +48,20 @@ export default function New() {
       }),
     };
 
-    mutate(cleanData, {
-      onSuccess: (data) => {
-        notify.success("Checklist created succesfully!");
-        void router.push(`/${data.id}`);
-      },
-      onError: (e) => {
-        if (e instanceof TRPCClientError) {
-          notify.error("Error: " + e.message);
-        } else {
-          console.log(e);
-          throw e;
-        }
-      },
-    });
+    mutate(
+      { schema: cleanData, isPublic: publishAsPublic },
+      {
+        onSuccess: (data) => {
+          notify.success("Checklist created succesfully!");
+          void router.push(`/${data.id}`);
+        },
+        onError: () => {
+          notify.error(
+            "An unexpected error happened. If you believe this should not be happening please contact us."
+          );
+        },
+      }
+    );
   };
 
   return (
@@ -79,8 +85,15 @@ export default function New() {
   );
 }
 
-export function Settings() {
-  const { enableMultipleSections, toggleMultipleSections } = useSettingsStore();
+export function Settings({ id }: { id?: string }) {
+  const {
+    enableMultipleSections,
+    toggleMultipleSections,
+    publishAsPublic,
+    setPublishAsPublic,
+  } = useSettingsStore();
+
+  const { mutate, isLoading } = api.checklist.update.useMutation();
 
   return (
     <>
@@ -93,10 +106,26 @@ export function Settings() {
           description="Allows you to break steps down into different sections, recommended for complex checklists."
         />
         <Toggle
-          value={false}
-          onChange={() => null}
-          label="Publish as temporary"
-          description="Checklist will be anonymous and deleted in 24 hours."
+          value={publishAsPublic}
+          loading={isLoading}
+          onChange={(value) => {
+            setPublishAsPublic(value);
+            if (id)
+              mutate(
+                { id, isPublic: value },
+                {
+                  onSuccess: () =>
+                    notify.success("Checklist visibility updated!"),
+                  onError: (e) => {
+                    if (e instanceof TRPCClientError) {
+                      notify.error("Error: " + e.message);
+                    }
+                  },
+                }
+              );
+          }}
+          label="Set public"
+          description="When enabled, the checklist will show on your public profile."
         />
       </div>
     </>

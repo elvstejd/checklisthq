@@ -16,7 +16,8 @@ import { notify } from "../../../utils/notifications";
 const Edit: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { enableMultipleSections, toggleMultipleSections } = useSettingsStore();
+  const { enableMultipleSections, toggleMultipleSections, setPublishAsPublic } =
+    useSettingsStore();
   const [checklist, setChecklist] = useState<
     RouterOutputs["checklist"]["getById"] | undefined
   >();
@@ -34,10 +35,16 @@ const Edit: NextPage = () => {
       id: id as string,
     });
 
-    if (checklist?.sections[0]?.title) {
+    if (checklist?.schema.sections[0]?.title) {
       toggleMultipleSections(true);
     } else {
       toggleMultipleSections(false);
+    }
+
+    if (checklist?.isPublic) {
+      setPublishAsPublic(true);
+    } else {
+      setPublishAsPublic(false);
     }
 
     setChecklist(checklist);
@@ -65,11 +72,12 @@ const Edit: NextPage = () => {
       }),
     };
 
-    console.log({ cleanData });
-
     if (id) {
       mutate(
-        { id: id as string, newChecklist: cleanData },
+        {
+          id: id as string,
+          newChecklist: cleanData,
+        },
         {
           onSuccess: () => {
             notify.success("Checklist updated succesfully!");
@@ -92,7 +100,7 @@ const Edit: NextPage = () => {
             <ChecklistForm
               submitIsLoading={isLoading}
               onSuccesfulSubmit={onSubmit}
-              defaultValues={checklist}
+              defaultValues={checklist.schema}
               submitLabel="Update"
             />
           ) : (
@@ -100,7 +108,7 @@ const Edit: NextPage = () => {
           )}
         </div>
         <div className="md:col-span-4 lg:col-span-3">
-          <Settings />
+          <Settings id={id as string} />
         </div>
       </div>
     </Shell>
