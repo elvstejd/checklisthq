@@ -83,7 +83,7 @@ export const checklistRouter = createTRPCRouter({
       return { id: result.id };
     }),
   create: protectedProcedure
-    .input(checklistSchema)
+    .input(z.object({ isPublic: z.boolean(), schema: checklistSchema }))
     .mutation(async ({ ctx, input }) => {
       const id = await nanoid();
       const result = await ctx.prisma.checklist.create({
@@ -91,14 +91,19 @@ export const checklistRouter = createTRPCRouter({
           schema: JSON.stringify(input),
           id,
           userId: ctx.session.user.id,
-          title: input.title,
+          title: input.schema.title,
+          isPublic: input.isPublic,
         },
       });
       return { id: result.id };
     }),
   update: protectedProcedure
     .input(
-      z.object({ id: z.string().length(7), newChecklist: checklistSchema })
+      z.object({
+        id: z.string().length(7),
+        isPublic: z.boolean().optional(),
+        newChecklist: checklistSchema.optional(),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const id = input.id;
@@ -107,7 +112,8 @@ export const checklistRouter = createTRPCRouter({
         where: { id },
         data: {
           schema: JSON.stringify(input.newChecklist),
-          title: input.newChecklist.title,
+          title: input.newChecklist?.title,
+          isPublic: input.isPublic,
         },
       });
 
@@ -115,7 +121,7 @@ export const checklistRouter = createTRPCRouter({
     }),
   getById: publicProcedure
     .input(z.object({ id: z.string() }))
-    .output(checklistSchema.optional())
+    // .output(checklistSchema.optional())
     .query(async ({ ctx, input }) => {
       try {
         const checklist = await ctx.prisma.checklist.findUniqueOrThrow({
@@ -123,9 +129,12 @@ export const checklistRouter = createTRPCRouter({
           include: { user: { select: { username: true } } },
         });
 
-        return JSON.parse(checklist.schema as string) as z.TypeOf<
-          typeof checklistSchema
-        >;
+        return {
+          ...checklist,
+          schema: JSON.parse(checklist.schema as string) as z.TypeOf<
+            typeof checklistSchema
+          >,
+        };
       } catch (e) {
         if (e instanceof Prisma.PrismaClientKnownRequestError) {
           if (e.code === "P2025") {
@@ -133,11 +142,10 @@ export const checklistRouter = createTRPCRouter({
               code: "NOT_FOUND",
               message: "404 Checklist Not Found",
             });
-          }
+          } else throw e;
         }
       }
     }),
-
   getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.checklist.findMany({
       where: { userId: ctx.session?.user.id },
