@@ -65,7 +65,11 @@ export function ChecklistForm({
   return (
     <div>
       <form
-        onSubmit={(...args) => void handleSubmit(onSuccesfulSubmit)(...args)}
+        onSubmit={(...args) =>
+          void handleSubmit(onSuccesfulSubmit, (things) => console.log(things))(
+            ...args
+          )
+        }
       >
         <div className="relative mt-3 mb-4 flex flex-col items-center">
           <Controller
