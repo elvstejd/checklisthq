@@ -93,63 +93,23 @@ export function ChecklistForm({
           <p className="mt-1 text-sm text-red-600">{errors.title?.message}</p>
         </div>
         {sections.map((section, sectionIndex) => (
-          <div key={section.id}>
-            <div
-              className={clsx(
-                "mb-6 rounded-md border border-solid border-gray-200",
-                {
-                  "border-red-500":
-                    errors.sections?.[sectionIndex]?.tasks?.message,
-                }
-              )}
-            >
-              {enableMultipleSections && (
-                <div className="border-b py-3 px-4">
-                  <Controller
-                    control={control}
-                    name={`sections.${sectionIndex}.title`}
-                    render={({ field: { onChange } }) => (
-                      <SpanInput
-                        placeholder="Section title"
-                        className="text-lg font-semibold text-gray-800"
-                        uniqueClass="section-title"
-                        onChange={onChange}
-                        autoFocus={sectionIndex !== 0}
-                        error={errors.sections?.[sectionIndex]?.title?.message}
-                        defaultValue={
-                          defaultValues?.sections?.[sectionIndex]?.title
-                        }
-                      />
-                    )}
-                  />
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.sections?.[sectionIndex]?.title?.message}
-                  </p>
-                </div>
-              )}
-              <div className="px-4">
-                <TasksInputArray
-                  {...{
-                    control,
-                    register,
-                    unregister,
-                    sectionIndex,
-                    watch,
-                    sectionRemove: remove,
-                    errors,
-                    resetField,
-                    clearErrors,
-                    reset,
-                    defaultValues,
-                    setValue,
-                  }}
-                />
-              </div>
-            </div>
-            <p className="text-sm text-red-600">
-              {errors.sections?.[sectionIndex]?.tasks?.message}
-            </p>
-          </div>
+          <Section
+            key={section.id}
+            {...{
+              control,
+              register,
+              unregister,
+              sectionIndex,
+              watch,
+              sectionRemove: remove,
+              errors,
+              resetField,
+              clearErrors,
+              reset,
+              defaultValues,
+              setValue,
+            }}
+          />
         ))}
         {enableMultipleSections && (
           <button
@@ -167,6 +127,92 @@ export function ChecklistForm({
         </div>
       </form>
     </div>
+  );
+}
+
+function Section({
+  sectionIndex,
+  control,
+  register,
+  unregister,
+  sectionRemove,
+  watch,
+  errors,
+  reset,
+  defaultValues,
+  setValue,
+}: {
+  sectionIndex: number;
+  control: Control<ChecklistSchema>;
+  register: UseFormRegister<ChecklistSchema>;
+  unregister: UseFormUnregister<ChecklistSchema>;
+  sectionRemove: UseFieldArrayRemove;
+  watch: UseFormWatch<ChecklistSchema>;
+  errors: Partial<FieldErrorsImpl<ChecklistSchema>>;
+  reset: UseFormReset<ChecklistSchema>;
+  defaultValues?: Readonly<DefaultValues<ChecklistSchema>>;
+  setValue?: UseFormSetValue<ChecklistSchema>;
+}) {
+  const { enableMultipleSections } = useSettingsStore();
+
+  useEffect(() => {
+    if (enableMultipleSections) {
+      register(`sections.${sectionIndex}.title`);
+    } else {
+      unregister(`sections.${sectionIndex}.title`);
+    }
+  }, [register, sectionIndex, enableMultipleSections, unregister]);
+
+  return (
+    <>
+      <div
+        className={clsx("mb-6 rounded-md border border-solid border-gray-200", {
+          "border-red-500": errors.sections?.[sectionIndex]?.tasks?.message,
+        })}
+      >
+        {enableMultipleSections && (
+          <div className="border-b py-3 px-4">
+            <Controller
+              control={control}
+              name={`sections.${sectionIndex}.title`}
+              render={({ field: { onChange } }) => (
+                <SpanInput
+                  placeholder="Section title"
+                  className="text-lg font-semibold text-gray-800"
+                  uniqueClass="section-title"
+                  onChange={onChange}
+                  autoFocus={sectionIndex !== 0}
+                  error={errors.sections?.[sectionIndex]?.title?.message}
+                  defaultValue={defaultValues?.sections?.[sectionIndex]?.title}
+                />
+              )}
+            />
+            <p className="mt-1 text-sm text-red-600">
+              {errors.sections?.[sectionIndex]?.title?.message}
+            </p>
+          </div>
+        )}
+        <div className="px-4">
+          <TasksInputArray
+            {...{
+              control,
+              register,
+              unregister,
+              sectionIndex,
+              watch,
+              sectionRemove,
+              errors,
+              reset,
+              defaultValues,
+              setValue,
+            }}
+          />
+        </div>
+      </div>
+      <p className="text-sm text-red-600">
+        {errors.sections?.[sectionIndex]?.tasks?.message}
+      </p>
+    </>
   );
 }
 
