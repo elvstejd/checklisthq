@@ -32,11 +32,12 @@ const Home: NextPage = () => {
             <div className="flex flex-col-reverse lg:grid lg:grid-cols-12">
               <div className="col-span-12 mx-auto max-w-2xl lg:col-span-5">
                 <h1 className="mt-3 text-center text-4xl font-bold lg:text-left lg:text-4xl">
-                  Checklist templates to make lightning strike twice
+                  The easiest way to create reusable checklists
                 </h1>
                 <p className="mt-5 text-center text-lg lg:text-left">
-                  Create easily shareable checklists to make sure your processes
-                  yield perfection every single time.
+                  With ChecklistHQ, you can create custom checklists for any
+                  task or project. Become more organized, efficient and never
+                  forget a step again!
                 </p>
                 <div className="mt-10 lg:mt-6 lg:w-fit">
                   <Link href={"/new"} className="flex justify-center">
