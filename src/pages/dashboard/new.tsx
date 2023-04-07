@@ -9,6 +9,7 @@ import { api } from "../../utils/api";
 import { notify } from "../../utils/notifications";
 import { useRouter } from "next/router";
 import { TRPCClientError } from "@trpc/client";
+import { SimpleChecklistForm } from "../../components/SimpleChecklistForm";
 
 export default function New() {
   const {
@@ -72,10 +73,17 @@ export default function New() {
     >
       <div className="flex flex-col md:grid md:grid-cols-12 md:gap-4">
         <div className=" md:col-span-8 lg:col-span-9">
-          <ChecklistForm
-            onSuccesfulSubmit={onSubmit}
-            submitIsLoading={isLoading}
-          />
+          {enableMultipleSections ? (
+            <ChecklistForm
+              onSuccesfulSubmit={onSubmit}
+              submitIsLoading={isLoading}
+            />
+          ) : (
+            <SimpleChecklistForm
+              onSuccesfulSubmit={onSubmit}
+              submitIsLoading={isLoading}
+            />
+          )}
         </div>
         <div className="md:col-span-4 lg:col-span-3">
           <Settings />

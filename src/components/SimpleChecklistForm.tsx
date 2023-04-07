@@ -26,7 +26,7 @@ interface ChecklistFormProps {
   submitLabel?: string;
 }
 
-export function ChecklistForm({
+export function SimpleChecklistForm({
   onSuccesfulSubmit,
   defaultValues: providedDefaultValues,
   submitIsLoading,
@@ -50,14 +50,9 @@ export function ChecklistForm({
     resolver: zodResolver(checklistSchema),
   });
 
-  const {
-    fields: sections,
-    append,
-    remove,
-  } = useFieldArray({
+  const { fields: sections, remove } = useFieldArray({
     control,
     name: "sections",
-    shouldUnregister: true,
   });
 
   return (
@@ -109,15 +104,6 @@ export function ChecklistForm({
             }}
           />
         ))}
-
-        <button
-          onClick={() =>
-            append({ tasks: [{ description: "", title: "" }], title: "" })
-          }
-        >
-          Add another section...
-        </button>
-
         <div className="flex justify-center">
           <Button loading={submitIsLoading} type="submit">
             {submitLabel ? submitLabel : "Publish"}
@@ -154,47 +140,27 @@ function Section({
   return (
     <>
       <div
-        className={clsx("mb-6 rounded-md border border-solid border-gray-200", {
-          "border-red-500": errors.sections?.[sectionIndex]?.tasks?.message,
-        })}
+        className={clsx(
+          "mb-6 rounded-md border border-solid border-gray-200 px-4",
+          {
+            "border-red-500": errors.sections?.[sectionIndex]?.tasks?.message,
+          }
+        )}
       >
-        <div className="border-b py-3 px-4">
-          <Controller
-            control={control}
-            name={`sections.${sectionIndex}.title`}
-            render={({ field: { onChange } }) => (
-              <SpanInput
-                placeholder="Section title"
-                className="text-lg font-semibold text-gray-800"
-                uniqueClass="section-title"
-                onChange={onChange}
-                autoFocus={sectionIndex !== 0}
-                error={errors.sections?.[sectionIndex]?.title?.message}
-                defaultValue={defaultValues?.sections?.[sectionIndex]?.title}
-              />
-            )}
-          />
-          <p className="mt-1 text-sm text-red-600">
-            {errors.sections?.[sectionIndex]?.title?.message}
-          </p>
-        </div>
-
-        <div className="px-4">
-          <TasksInputArray
-            {...{
-              control,
-              register,
-              unregister,
-              sectionIndex,
-              watch,
-              sectionRemove,
-              errors,
-              reset,
-              defaultValues,
-              setValue,
-            }}
-          />
-        </div>
+        <TasksInputArray
+          {...{
+            control,
+            register,
+            unregister,
+            sectionIndex,
+            watch,
+            sectionRemove,
+            errors,
+            reset,
+            defaultValues,
+            setValue,
+          }}
+        />
       </div>
       <p className="text-sm text-red-600">
         {errors.sections?.[sectionIndex]?.tasks?.message}
@@ -402,7 +368,6 @@ function TaskInput({
           type="button"
           onClick={() => {
             remove(taskIndex);
-
             const lastTaskOnTheSection =
               watchSections[sectionIndex]?.tasks.length === 0;
             // remove the section when user removes the last task on it
@@ -422,7 +387,6 @@ const localDefaultValues = {
   title: "",
   sections: [
     {
-      title: "",
       tasks: [
         {
           title: "",
@@ -441,11 +405,6 @@ const checklistSchema = z.object({
   sections: z
     .array(
       z.object({
-        title: z
-          .string()
-          .min(1, "Section title appears to be empty. Please provide one.")
-          .max(80, "Reached 80 char limit.")
-          .optional(),
         tasks: z
           .array(
             z.object({
@@ -463,8 +422,7 @@ const checklistSchema = z.object({
           ),
       })
     )
-    .min(1)
-    .max(10),
+    .length(1),
 });
 
 export type ChecklistSchema = z.infer<typeof checklistSchema>;

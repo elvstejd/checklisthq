@@ -12,6 +12,7 @@ import { Settings } from "../new";
 import type { SubmitHandler } from "react-hook-form";
 import { useSettingsStore } from "../../../stores";
 import { notify } from "../../../utils/notifications";
+import { SimpleChecklistForm } from "../../../components/SimpleChecklistForm";
 
 const Edit: NextPage = () => {
   const router = useRouter();
@@ -97,12 +98,21 @@ const Edit: NextPage = () => {
       <div className="flex flex-col md:grid md:grid-cols-12 md:gap-4">
         <div className=" md:col-span-8 lg:col-span-9">
           {checklist ? (
-            <ChecklistForm
-              submitIsLoading={isLoading}
-              onSuccesfulSubmit={onSubmit}
-              defaultValues={checklist.schema}
-              submitLabel="Update"
-            />
+            enableMultipleSections ? (
+              <ChecklistForm
+                submitIsLoading={isLoading}
+                onSuccesfulSubmit={onSubmit}
+                defaultValues={checklist.schema}
+                submitLabel="Update"
+              />
+            ) : (
+              <SimpleChecklistForm
+                submitIsLoading={isLoading}
+                onSuccesfulSubmit={onSubmit}
+                defaultValues={checklist.schema}
+                submitLabel="Update"
+              />
+            )
           ) : (
             <LoadingSkeleton />
           )}
